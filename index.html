@@ -31,19 +31,23 @@
       border: 1px solid #aaa;
       background: #f0f7fb;
     }
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
+    /* Galería en carrusel horizontal */
+    .gallery-container {
+      overflow-x: auto;
+      white-space: nowrap;
       padding: 20px;
-      text-align: center;
+      background: #f5f7fa;
+    }
+    .gallery {
+      display: inline-flex;
+      gap: 20px;
+      justify-content: center;
     }
     .gallery img {
-      width: 100%;
-      max-width: 500px;
-      border-radius: 6px;
-      border: 1px solid #ddd;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+      height: 400px; /* más grande */
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
       background: #fff;
     }
     footer {
@@ -85,7 +89,9 @@
   </label>
 </div>
 
-<div class="gallery" id="galeria"></div>
+<div class="gallery-container">
+  <div class="gallery" id="galeria"></div>
+</div>
 
 <footer>
   <p>Elaboración: SENAMHI / DMA / SMN</p>

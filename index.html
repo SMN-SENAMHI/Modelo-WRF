@@ -32,7 +32,7 @@
       background: #f0f7fb;
     }
 
-    /* Contenedor del carrusel */
+    /* Tarjeta carrusel */
     .gallery-wrapper {
       display: flex;
       justify-content: center;
@@ -44,7 +44,7 @@
       background: #fff;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      padding: 30px 60px; /* espacio para flechas */
+      padding: 30px 60px;
       max-width: 90%;
     }
     .gallery {
@@ -236,9 +236,10 @@ function cargarGaleria() {
 function moveGallery(direction) {
   const galeria = document.getElementById("galeria");
   const items = galeria.querySelectorAll("img").length;
-  const visible = Math.floor(window.innerWidth / 500);
+  const visible = Math.floor(window.innerWidth / 500); // cuántas caben
   const maxIndex = Math.max(0, items - visible);
-  galleryIndex += direction;
+  // Mover de a "pantallas completas"
+  galleryIndex += direction * visible;
   if (galleryIndex < 0) galleryIndex = 0;
   if (galleryIndex > maxIndex) galleryIndex = maxIndex;
   updateGalleryPosition();
@@ -264,5 +265,3 @@ cargarGaleria();
 
 </body>
 </html>
-
- 

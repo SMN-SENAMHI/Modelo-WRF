@@ -249,7 +249,8 @@ const ecmwfFiles = [
 const archivos = { "GEFS": gefsFiles, "CFSv2": cfsv2Files, "ECMWF": ecmwfFiles };
 
 let galleryIndex = 0;
-let maxIndex = 0;
+let imgWidth = 0;
+let visibleCount = 1;
 
 function cargarGaleria() {
   const modelo = document.getElementById("modelo").value;
@@ -272,42 +273,39 @@ function cargarGaleria() {
   });
 
   galleryIndex = 0;
-  calcMaxIndex();
+  calcSizes();
   updateGalleryPosition();
   updateArrows();
 }
 
-function calcMaxIndex() {
-  const galeria = document.getElementById("galeria");
-  const items = galeria.querySelectorAll("img");
-  if (items.length === 0) {
-    maxIndex = 0;
-    return;
-  }
-  const imgWidth = items[0].clientWidth + 20; // ancho + gap
-  const visibleWidth = galeria.parentElement.clientWidth;
-  const visibleCount = Math.floor(visibleWidth / imgWidth) + 2; // margen extra
-  maxIndex = Math.max(0, items.length - visibleCount);
-}
-
-function moveGallery(direction) {
-  galleryIndex += direction;
-  if (galleryIndex < 0) galleryIndex = 0;
-  if (galleryIndex > maxIndex) galleryIndex = maxIndex;
-  updateGalleryPosition();
-  updateArrows();
-}
-
-function updateGalleryPosition() {
+function calcSizes() {
   const galeria = document.getElementById("galeria");
   const items = galeria.querySelectorAll("img");
   if (items.length === 0) return;
-  const imgWidth = items[0].clientWidth + 20;
-  const offset = galleryIndex * -imgWidth;
-  galeria.style.transform = `translateX(${offset}px)`;
+
+  imgWidth = items[0].clientWidth + 20; // ancho + gap
+  const visibleWidth = galeria.parentElement.clientWidth;
+  visibleCount = Math.floor(visibleWidth / imgWidth);
 }
 
-function updateArrows() {
+function moveGallery(direction) {
+  const galeria = document.getElementById("galeria");
+  const items = galeria.querySelectorAll("img");
+  if (items.length === 0) return;
+
+  galleryIndex += direction;
+  if (galleryIndex < 0) galleryIndex = 0;
+  if (galleryIndex > items.length - visibleCount) {
+    galleryIndex = items.length - visibleCount;
+  }
+
+  const offset = galleryIndex * -imgWidth;
+  galeria.style.transform = `translateX(${offset}px)`;
+
+  updateArrows(items.length, visibleCount);
+}
+
+function updateArrows(total, visible) {
   const leftArrow = document.getElementById("arrowLeft");
   const rightArrow = document.getElementById("arrowRight");
 
@@ -317,7 +315,7 @@ function updateArrows() {
     leftArrow.classList.remove("disabled");
   }
 
-  if (galleryIndex >= maxIndex) {
+  if (galleryIndex >= total - visible) {
     rightArrow.classList.add("disabled");
   } else {
     rightArrow.classList.remove("disabled");
@@ -343,8 +341,8 @@ document.getElementById("modelo").addEventListener("change", () => {
 document.getElementById("variable").addEventListener("change", cargarGaleria);
 document.getElementById("periodo").addEventListener("change", cargarGaleria);
 window.addEventListener("resize", () => {
-  calcMaxIndex();
-  updateArrows();
+  calcSizes();
+  moveGallery(0);
 });
 
 cargarGaleria();

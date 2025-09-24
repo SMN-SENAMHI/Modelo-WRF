@@ -50,7 +50,7 @@
     .gallery {
       display: flex;
       gap: 20px;
-      transition: transform 0.4s ease-in-out;
+      transition: transform 0.8s ease; /* más lento y suave */
     }
     .gallery img {
       height: 420px;
@@ -58,6 +58,7 @@
       border: 1px solid #ccc;
       box-shadow: 0 3px 6px rgba(0,0,0,0.15);
       background: #fff;
+      cursor: pointer;
     }
 
     /* Flechas */
@@ -95,6 +96,39 @@
       text-align: center;
       padding: 10px;
       margin-top: 20px;
+    }
+
+    /* Modal (imagen completa) */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+    }
+    .close {
+      position: absolute;
+      top: 20px;
+      right: 40px;
+      font-size: 40px;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+    }
+    .close:hover {
+      color: #ddd;
     }
   </style>
 </head>
@@ -134,6 +168,12 @@
     <div class="gallery" id="galeria"></div>
     <button class="arrow right" onclick="moveGallery(1)">&#10095;</button>
   </div>
+</div>
+
+<!-- Modal para imagen completa -->
+<div id="imgModal" class="modal">
+  <span class="close" onclick="closeModal()">&times;</span>
+  <img id="modalImg" src="" alt="Imagen ampliada">
 </div>
 
 <footer>
@@ -226,6 +266,7 @@ function cargarGaleria() {
     }
     const img = document.createElement("img");
     img.src = baseURL + file;
+    img.onclick = () => openModal(baseURL + file);
     galeria.appendChild(img);
   });
 
@@ -236,19 +277,28 @@ function cargarGaleria() {
 function moveGallery(direction) {
   const galeria = document.getElementById("galeria");
   const items = galeria.querySelectorAll("img").length;
-  const visible = Math.floor(window.innerWidth / 500); // cuántas caben
-  const maxIndex = Math.max(0, items - visible);
-  // Mover de a "pantallas completas"
-  galleryIndex += direction * visible;
+
+  // mover solo 1 imagen por clic
+  galleryIndex += direction;
   if (galleryIndex < 0) galleryIndex = 0;
-  if (galleryIndex > maxIndex) galleryIndex = maxIndex;
+  if (galleryIndex > items - 1) galleryIndex = items - 1;
+
   updateGalleryPosition();
 }
 
 function updateGalleryPosition() {
   const galeria = document.getElementById("galeria");
-  const offset = galleryIndex * -520;
+  const offset = galleryIndex * -540; // ancho imagen + gap
   galeria.style.transform = `translateX(${offset}px)`;
+}
+
+// Modal funciones
+function openModal(src) {
+  document.getElementById("modalImg").src = src;
+  document.getElementById("imgModal").style.display = "flex";
+}
+function closeModal() {
+  document.getElementById("imgModal").style.display = "none";
 }
 
 document.getElementById("modelo").addEventListener("change", () => {

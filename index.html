@@ -1,102 +1,214 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Pronósticos Mensuales C3S - SMN-SENAMHI</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
-        select { font-size: 16px; padding: 6px; margin: 10px; }
-        .images { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 20px; }
-        .img-container { text-align: center; width: 30%; }
-        .img-container img { width: 100%; border: 1px solid #ccc; box-shadow: 2px 2px 6px rgba(0,0,0,0.1); }
-        .img-container p { font-size: 14px; margin: 5px 0; }
-    </style>
+  <meta charset="UTF-8">
+  <title>Dashboard Modelos-WRF</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f5f7fa;
+      color: #333;
+    }
+    header {
+      background: #004d73;
+      color: white;
+      text-align: center;
+      padding: 15px;
+    }
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      padding: 15px;
+      background: #0099cc;
+      flex-wrap: wrap;
+    }
+    select {
+      padding: 6px;
+      font-size: 14px;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      padding: 20px;
+      text-align: center;
+    }
+    .gallery img {
+      width: 100%;
+      max-width: 500px;
+      border-radius: 6px;
+      border: 2px solid #ccc;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    footer {
+      background: #004d73;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-    <h2>Pronóstico Mensual C3S por Dirección Zonal - 2025</h2>
-    <p>Selecciona una Dirección Zonal y luego un mes para visualizar las anomalías:</p>
 
-    <label for="dzSelect">Dirección Zonal:</label>
-    <select id="dzSelect">
-        <option value="">-- Elegir DZ --</option>
-        <option value="01">DZ PIURA</option>
-        <option value="02">DZ LAMBAYEQUE</option>
-        <option value="03">DZ CAJAMARCA</option>
-        <option value="04">DZ LIMA</option>
-        <option value="05">DZ ICA</option>
-        <option value="06">DZ AREQUIPA</option>
-        <option value="07">DZ TACNA</option>
-        <option value="08">DZ LORETO</option>
-        <option value="09">DZ SAN MARTÍN</option>
-        <option value="10">DZ HUÁNUCO</option>
-        <option value="11">DZ JUNÍN</option>
-        <option value="12">DZ CUSCO</option>
-        <option value="13">DZ PUNO</option>
+<header>
+  <h1>📊 Dashboard Modelos-WRF</h1>
+  <p>Visualización dinámica de predicciones climáticas</p>
+</header>
+
+<div class="controls">
+  <label>Modelo:
+    <select id="modelo">
+      <option value="GEFS">WRF-GEFS (Subestacional)</option>
+      <option value="CFSv2">WRF-CFSv2 (Mensual/Trimestral)</option>
+      <option value="ECMWF">WRF-ECMWF (Mensual/Trimestral)</option>
     </select>
-
-    <label for="monthSelect">Mes:</label>
-    <select id="monthSelect" disabled>
-        <option value="">-- Elegir mes --</option>
-        <option value="202506">Junio 2025</option>
-        <option value="202507">Julio 2025</option>
-        <option value="202508">Agosto 2025</option>
-        <option value="202509">Setiembre 2025</option>
-        <option value="202510">Octubre 2025</option>
+  </label>
+  <label>Variable:
+    <select id="variable">
+      <option value="Prec">Precipitación</option>
+      <option value="TempMax">Temperatura Máxima</option>
+      <option value="TempMin">Temperatura Mínima</option>
     </select>
+  </label>
+  <label id="filtroPeriodoLabel" style="display:none;">Periodo:
+    <select id="periodo">
+      <option value="mensual">Mensual</option>
+      <option value="trimestral">Trimestral</option>
+    </select>
+  </label>
+</div>
 
-    <div class="images" id="imageContainer"></div>
+<div class="gallery" id="galeria"></div>
 
-    <script>
-        const imageContainer = document.getElementById("imageContainer");
-        const dzSelect = document.getElementById("dzSelect");
-        const monthSelect = document.getElementById("monthSelect");
-        const baseUrl = "https://smn-senamhi.github.io/C3Smensual/data/graphics/DZ/";
+<footer>
+  <p>Elaboración: SENAMHI / DMA / SMN</p>
+</footer>
 
-        const dzList = {
-            "01": "PIURA", "02": "LAMBAYEQUE", "03": "CAJAMARCA", "04": "LIMA",
-            "05": "ICA", "06": "AREQUIPA", "07": "TACNA", "08": "LORETO",
-            "09": "SAN MARTÍN", "10": "HUÁNUCO", "11": "JUNÍN", "12": "CUSCO", "13": "PUNO"
-        };
+<script>
+const baseURL = "https://raw.githubusercontent.com/SMN-SENAMHI/Modelo-WRF/main/Graphics/";
 
-        const variables = [
-            { code: "anomPrec", label: "Precipitación" },
-            { code: "anomTempMin", label: "Temp. Mínima" },
-            { code: "anomTempMax", label: "Temp. Máxima" }
-        ];
+// =========================
+// LISTAS DE ARCHIVOS
+// =========================
 
-        dzSelect.addEventListener("change", function () {
-            imageContainer.innerHTML = "";
-            monthSelect.value = "";
-            monthSelect.disabled = !this.value;
-        });
+// 🔹 1. WRF-GEFS (subestacional: 4 semanas, ejemplo)
+const gefsFiles = [
+  "gefs_20250901_wk1_anomPrec.png",
+  "gefs_20250901_wk1_anomTempMax.png",
+  "gefs_20250901_wk1_anomTempMin.png",
+  "gefs_20250901_wk2_anomPrec.png",
+  "gefs_20250901_wk2_anomTempMax.png",
+  "gefs_20250901_wk2_anomTempMin.png",
+  "gefs_20250901_wk3_anomPrec.png",
+  "gefs_20250901_wk3_anomTempMax.png",
+  "gefs_20250901_wk3_anomTempMin.png",
+  "gefs_20250901_wk4_anomPrec.png",
+  "gefs_20250901_wk4_anomTempMax.png",
+  "gefs_20250901_wk4_anomTempMin.png"
+];
 
-        monthSelect.addEventListener("change", function () {
-            const dzCode = dzSelect.value;
-            const dzName = dzList[dzCode];
-            const month = this.value;
-            imageContainer.innerHTML = "";
+// 🔹 2. WRF-CFSv2 (mensuales + trimestrales)
+const cfsv2Files = [
+  "pre_smnwrf_202509_anomPrec_wrf.png",
+  "pre_smnwrf_202509_anomTempMax_wrf.png",
+  "pre_smnwrf_202509_anomTempMin_wrf.png",
+  "pre_smnwrf_202510_anomPrec_wrf.png",
+  "pre_smnwrf_202510_anomTempMax_wrf.png",
+  "pre_smnwrf_202510_anomTempMin_wrf.png",
+  "pre_smnwrf_2025101112_anomPrec_wrf.png",
+  "pre_smnwrf_2025101112_anomTempMax_wrf.png",
+  "pre_smnwrf_2025101112_anomTempMin_wrf.png",
+  "pre_smnwrf_202511_anomPrec_wrf.png",
+  "pre_smnwrf_202511_anomTempMax_wrf.png",
+  "pre_smnwrf_202511_anomTempMin_wrf.png",
+  "pre_smnwrf_202512_anomPrec_wrf.png",
+  "pre_smnwrf_202512_anomTempMax_wrf.png",
+  "pre_smnwrf_202512_anomTempMin_wrf.png",
+  "pre_smnwrf_202601_anomPrec_wrf.png",
+  "pre_smnwrf_202601_anomTempMax_wrf.png",
+  "pre_smnwrf_202601_anomTempMin_wrf.png",
+  "pre_smnwrf_202602_anomPrec_wrf.png",
+  "pre_smnwrf_202602_anomTempMax_wrf.png",
+  "pre_smnwrf_202602_anomTempMin_wrf.png"
+];
 
-            if (!dzCode || !month) return;
+// 🔹 3. WRF-ECMWF (mensuales + trimestrales, ejemplo)
+const ecmwfFiles = [
+  "pre_ecmwf_202509_anomPrec_wrf.png",
+  "pre_ecmwf_202509_anomTempMax_wrf.png",
+  "pre_ecmwf_202509_anomTempMin_wrf.png",
+  "pre_ecmwf_202510_anomPrec_wrf.png",
+  "pre_ecmwf_202510_anomTempMax_wrf.png",
+  "pre_ecmwf_202510_anomTempMin_wrf.png",
+  "pre_ecmwf_2025101112_anomPrec_wrf.png",
+  "pre_ecmwf_2025101112_anomTempMax_wrf.png",
+  "pre_ecmwf_2025101112_anomTempMin_wrf.png",
+  "pre_ecmwf_202511_anomPrec_wrf.png",
+  "pre_ecmwf_202511_anomTempMax_wrf.png",
+  "pre_ecmwf_202511_anomTempMin_wrf.png"
+];
 
-            variables.forEach(v => {
-                const filename = `pre_ecmwf_${month}_${v.code}_per_${dzCode}.png`;
-                const fullPath = baseUrl + filename;
+// =========================
+// DICCIONARIO DE MODELOS
+// =========================
+const archivos = {
+  "GEFS": gefsFiles,
+  "CFSv2": cfsv2Files,
+  "ECMWF": ecmwfFiles
+};
 
-                const div = document.createElement("div");
-                div.className = "img-container";
+// =========================
+// FUNCIÓN CARGAR GALERÍA
+// =========================
+function cargarGaleria() {
+  const modelo = document.getElementById("modelo").value;
+  const variable = document.getElementById("variable").value;
+  const periodo = document.getElementById("periodo").value;
+  const galeria = document.getElementById("galeria");
 
-                const img = document.createElement("img");
-                img.src = fullPath;
-                img.alt = `${v.label} - ${dzName}`;
+  galeria.innerHTML = "";
 
-                const caption = document.createElement("p");
-                caption.textContent = `${v.label} - DZ ${dzName}`;
+  archivos[modelo].forEach(file => {
+    // Filtrar por variable
+    if (!file.includes(variable)) return;
 
-                div.appendChild(img);
-                div.appendChild(caption);
-                imageContainer.appendChild(div);
-            });
-        });
-    </script>
+    // Filtrar mensual/trimestral
+    if (modelo !== "GEFS") {
+      if (periodo === "mensual" && file.includes("1112")) return;
+      if (periodo === "trimestral" && !file.includes("1112")) return;
+    }
+
+    const img = document.createElement("img");
+    img.src = baseURL + file;
+    img.alt = file;
+    galeria.appendChild(img);
+  });
+}
+
+// =========================
+// MOSTRAR/OCULTAR FILTRO PERIODO
+// =========================
+document.getElementById("modelo").addEventListener("change", () => {
+  const modelo = document.getElementById("modelo").value;
+  const filtroPeriodo = document.getElementById("filtroPeriodoLabel");
+
+  if (modelo === "CFSv2" || modelo === "ECMWF") {
+    filtroPeriodo.style.display = "inline-block";
+  } else {
+    filtroPeriodo.style.display = "none";
+  }
+  cargarGaleria();
+});
+
+document.getElementById("variable").addEventListener("change", cargarGaleria);
+document.getElementById("periodo").addEventListener("change", cargarGaleria);
+
+// Inicial
+cargarGaleria();
+</script>
+
 </body>
 </html>

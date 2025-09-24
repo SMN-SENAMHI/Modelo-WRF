@@ -32,7 +32,7 @@
       background: #f0f7fb;
     }
 
-    /* Contenedor del carrusel */
+    /* Contenedor carrusel */
     .gallery-container {
       overflow: hidden;
       padding: 40px 0;
@@ -52,9 +52,9 @@
       background: #fff;
     }
 
-    /* Flechas siempre visibles en pantalla */
+    /* Flechas */
     .arrow {
-      position: fixed; /* <-- cambio clave */
+      position: fixed;
       top: 50%;
       transform: translateY(-50%);
       font-size: 40px;
@@ -69,7 +69,7 @@
       line-height: 50px;
       text-align: center;
       transition: background 0.3s;
-      z-index: 1000; /* siempre encima */
+      z-index: 1000;
     }
     .arrow:hover {
       background: rgba(60, 120, 160, 0.9);
@@ -124,7 +124,7 @@
   <div class="gallery" id="galeria"></div>
 </div>
 
-<!-- Flechas fuera del contenedor -->
+<!-- Flechas fijas -->
 <button class="arrow left" onclick="moveGallery(-1)">&#10094;</button>
 <button class="arrow right" onclick="moveGallery(1)">&#10095;</button>
 
@@ -135,10 +135,146 @@
 <script>
 const baseURL = "https://raw.githubusercontent.com/SMN-SENAMHI/Modelo-WRF/main/Graphics/";
 
+// =========================
+// LISTAS DE ARCHIVOS
+// =========================
 const gefsFiles = [
   "gefs_20250901_wk1_anomPrec.png",
   "gefs_20250901_wk1_anomTempMax.png",
   "gefs_20250901_wk1_anomTempMin.png",
   "gefs_20250901_wk2_anomPrec.png",
   "gefs_20250901_wk2_anomTempMax.png",
-  "gefs
+  "gefs_20250901_wk2_anomTempMin.png",
+  "gefs_20250901_wk3_anomPrec.png",
+  "gefs_20250901_wk3_anomTempMax.png",
+  "gefs_20250901_wk3_anomTempMin.png",
+  "gefs_20250901_wk4_anomPrec.png",
+  "gefs_20250901_wk4_anomTempMax.png",
+  "gefs_20250901_wk4_anomTempMin.png"
+];
+
+const cfsv2Files = [
+  "pre_smnwrf_202510_anomPrec_wrf.png",
+  "pre_smnwrf_202510_anomTempMax_wrf.png",
+  "pre_smnwrf_202510_anomTempMin_wrf.png",
+  "pre_smnwrf_2025101112_anomPrec_wrf.png",
+  "pre_smnwrf_2025101112_anomTempMax_wrf.png",
+  "pre_smnwrf_2025101112_anomTempMin_wrf.png",
+  "pre_smnwrf_202511_anomPrec_wrf.png",
+  "pre_smnwrf_202511_anomTempMax_wrf.png",
+  "pre_smnwrf_202511_anomTempMin_wrf.png",
+  "pre_smnwrf_202512_anomPrec_wrf.png",
+  "pre_smnwrf_202512_anomTempMax_wrf.png",
+  "pre_smnwrf_202512_anomTempMin_wrf.png",
+  "pre_smnwrf_202601_anomPrec_wrf.png",
+  "pre_smnwrf_202601_anomTempMax_wrf.png",
+  "pre_smnwrf_202601_anomTempMin_wrf.png",
+  "pre_smnwrf_202602_anomPrec_wrf.png",
+  "pre_smnwrf_202602_anomTempMax_wrf.png",
+  "pre_smnwrf_202602_anomTempMin_wrf.png"
+];
+
+const ecmwfFiles = [
+  "pre_ecmwf_202509_anomPrec_wrf.png",
+  "pre_ecmwf_202509_anomTempMax_wrf.png",
+  "pre_ecmwf_202509_anomTempMin_wrf.png",
+  "pre_ecmwf_202510_anomPrec_wrf.png",
+  "pre_ecmwf_202510_anomTempMax_wrf.png",
+  "pre_ecmwf_202510_anomTempMin_wrf.png",
+  "pre_ecmwf_2025101112_anomPrec_wrf.png",
+  "pre_ecmwf_2025101112_anomTempMax_wrf.png",
+  "pre_ecmwf_2025101112_anomTempMin_wrf.png",
+  "pre_ecmwf_202511_anomPrec_wrf.png",
+  "pre_ecmwf_202511_anomTempMax_wrf.png",
+  "pre_ecmwf_202511_anomTempMin_wrf.png",
+  "pre_ecmwf_202512_anomPrec_wrf.png",
+  "pre_ecmwf_202512_anomTempMax_wrf.png",
+  "pre_ecmwf_202512_anomTempMin_wrf.png",
+  "pre_ecmwf_202601_anomPrec_wrf.png",
+  "pre_ecmwf_202601_anomTempMax_wrf.png",
+  "pre_ecmwf_202601_anomTempMin_wrf.png",
+  "pre_ecmwf_202602_anomPrec_wrf.png",
+  "pre_ecmwf_202602_anomTempMax_wrf.png",
+  "pre_ecmwf_202602_anomTempMin_wrf.png",
+  "pre_ecmwf_202603_anomPrec_wrf.png",
+  "pre_ecmwf_202603_anomTempMax_wrf.png",
+  "pre_ecmwf_202603_anomTempMin_wrf.png"
+];
+
+const archivos = {
+  "GEFS": gefsFiles,
+  "CFSv2": cfsv2Files,
+  "ECMWF": ecmwfFiles
+};
+
+let galleryIndex = 0;
+
+function cargarGaleria() {
+  const modelo = document.getElementById("modelo").value;
+  const variable = document.getElementById("variable").value;
+  const periodo = document.getElementById("periodo").value;
+  const galeria = document.getElementById("galeria");
+
+  galeria.innerHTML = "";
+
+  let files = archivos[modelo];
+
+  // Si no hay coincidencias, mostramos todo por defecto
+  let found = false;
+
+  files.forEach(file => {
+    if (!file.includes(variable)) return;
+    if (modelo !== "GEFS") {
+      if (periodo === "mensual" && file.includes("1112")) return;
+      if (periodo === "trimestral" && !file.includes("1112")) return;
+    }
+    found = true;
+    const img = document.createElement("img");
+    img.src = baseURL + file;
+    galeria.appendChild(img);
+  });
+
+  if (!found) {
+    // Mostrar todo para no dejar vacío
+    files.forEach(file => {
+      const img = document.createElement("img");
+      img.src = baseURL + file;
+      galeria.appendChild(img);
+    });
+  }
+
+  galleryIndex = 0;
+  updateGalleryPosition();
+}
+
+function moveGallery(direction) {
+  const galeria = document.getElementById("galeria");
+  const items = galeria.querySelectorAll("img").length;
+  const visible = Math.floor(window.innerWidth / 500);
+  const maxIndex = Math.max(0, items - visible);
+  galleryIndex += direction;
+  if (galleryIndex < 0) galleryIndex = 0;
+  if (galleryIndex > maxIndex) galleryIndex = maxIndex;
+  updateGalleryPosition();
+}
+
+function updateGalleryPosition() {
+  const galeria = document.getElementById("galeria");
+  const offset = galleryIndex * -520;
+  galeria.style.transform = `translateX(${offset}px)`;
+}
+
+document.getElementById("modelo").addEventListener("change", () => {
+  const modelo = document.getElementById("modelo").value;
+  const filtroPeriodo = document.getElementById("filtroPeriodoLabel");
+  filtroPeriodo.style.display = (modelo === "CFSv2" || modelo === "ECMWF") ? "inline-block" : "none";
+  cargarGaleria();
+});
+document.getElementById("variable").addEventListener("change", cargarGaleria);
+document.getElementById("periodo").addEventListener("change", cargarGaleria);
+
+cargarGaleria();
+</script>
+
+</body>
+</html>

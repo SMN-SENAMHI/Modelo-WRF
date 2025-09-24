@@ -67,7 +67,7 @@
     .gallery {
       display: flex;
       gap: 20px;
-      transition: transform 0.4s ease; /* más rápida */
+      transition: transform 0.4s ease; /* 👈 rápido y fluido */
     }
     .gallery img {
       height: 420px;
@@ -202,6 +202,9 @@
 <script>
 const baseURL = "https://raw.githubusercontent.com/SMN-SENAMHI/Modelo-WRF/main/Graphics/";
 
+// ======================
+// Archivos ejemplo
+// ======================
 const gefsFiles = [
   "gefs_20250901_wk1_anomPrec.png",
   "gefs_20250901_wk1_anomTempMax.png",
@@ -267,9 +270,15 @@ const ecmwfFiles = [
 
 const archivos = { "GEFS": gefsFiles, "CFSv2": cfsv2Files, "ECMWF": ecmwfFiles };
 
+// ======================
+// Variables globales
+// ======================
 let galleryIndex = 0;
 let imgWidth = 0;
 
+// ======================
+// Cargar galería
+// ======================
 function cargarGaleria() {
   const modelo = document.getElementById("modelo").value;
   const variable = document.getElementById("variable").value;
@@ -296,19 +305,25 @@ function cargarGaleria() {
   updateArrows();
 }
 
+// ======================
+// Calcular tamaños
+// ======================
 function calcSizes() {
   const galeria = document.getElementById("galeria");
   const items = galeria.querySelectorAll("img");
   if (items.length === 0) return;
-  imgWidth = items[0].clientWidth + 20;
+  imgWidth = items[0].clientWidth + 20; // ancho + gap
 }
 
+// ======================
+// Mover galería
+// ======================
 function moveGallery(direction) {
   const galeria = document.getElementById("galeria");
   const items = galeria.querySelectorAll("img");
   if (items.length === 0) return;
 
-  galleryIndex += direction * 2; // mover 2 imágenes por clic
+  galleryIndex += direction * 2; // 👈 mover 2 gráficos por clic
   if (galleryIndex < 0) galleryIndex = 0;
   if (galleryIndex > items.length - 1) {
     galleryIndex = items.length - 1;
@@ -320,6 +335,9 @@ function moveGallery(direction) {
   updateArrows(items.length);
 }
 
+// ======================
+// Actualizar flechas
+// ======================
 function updateArrows(total) {
   const leftArrow = document.getElementById("arrowLeft");
   const rightArrow = document.getElementById("arrowRight");
@@ -337,7 +355,9 @@ function updateArrows(total) {
   }
 }
 
+// ======================
 // Modal
+// ======================
 function openModal(src) {
   document.getElementById("modalImg").src = src;
   document.getElementById("imgModal").style.display = "flex";
@@ -346,7 +366,9 @@ function closeModal() {
   document.getElementById("imgModal").style.display = "none";
 }
 
+// ======================
 // Listeners
+// ======================
 document.getElementById("modelo").addEventListener("change", () => {
   const modelo = document.getElementById("modelo").value;
   const filtroPeriodo = document.getElementById("filtroPeriodoLabel");
@@ -360,6 +382,7 @@ window.addEventListener("resize", () => {
   moveGallery(0);
 });
 
+// Inicial
 cargarGaleria();
 </script>
 

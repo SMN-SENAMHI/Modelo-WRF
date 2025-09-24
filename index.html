@@ -286,7 +286,7 @@ function calcMaxIndex() {
   }
   const imgWidth = items[0].clientWidth + 20; // ancho + gap
   const visibleWidth = galeria.parentElement.clientWidth;
-  const visibleCount = Math.floor(visibleWidth / imgWidth) + 2; // margen extra
+  const visibleCount = Math.floor(visibleWidth / imgWidth) + 0.5; // margen extra
   maxIndex = Math.max(0, items.length - visibleCount);
 }
 

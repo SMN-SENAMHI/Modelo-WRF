@@ -6,7 +6,7 @@ En este repositorio se presentan tres sistemas principales, cada uno con distint
 
 ---
 
-## 🌦️ Modelo regional subestacional **WRF-GEFS**
+## Modelo regional subestacional **WRF-GEFS**
 
 - **Fuente global**: **GEFS** (Global Ensemble Forecast System, NOAA).  
   Sistema de predicción global por conjuntos, compuesto por 31 miembros, que permite estimar la incertidumbre de los pronósticos atmosféricos y climáticos. Proporciona proyecciones hasta 35 días y es ampliamente usado en aplicaciones de escala subestacional a estacional.  
@@ -25,7 +25,7 @@ Este sistema permite disponer de información actualizada cada semana para la to
 
 ---
 
-## 📆 Modelo regional mensual **WRF-CFSv2**
+## Modelo regional mensual **WRF-CFSv2**
 
 - **Fuente global**: **CFSv2** (Climate Forecast System, versión 2 – NCEP/NOAA).  
   Modelo acoplado atmósfera-océano que provee predicciones estacionales globales. Está diseñado para capturar fenómenos de variabilidad climática como **El Niño-Oscilación del Sur (ENOS)** y su impacto regional.  
@@ -40,7 +40,7 @@ Este sistema permite disponer de información actualizada cada semana para la to
   - Anomalías mensuales de **precipitación**  
   - Anomalías mensuales de **temperatura media, máxima y mínima**  
 
-Este sistema ofrece una visión consolidada de la evolución climática a mediano plazo, clave para la planificación agrícola, la gestión de embalses y la evaluación de escenarios de sequías o exceso de lluvias.  
+Este sistema ofrece una visión consolidada de la evolución climática a mediano plazo.  
 
 ---
 
@@ -59,7 +59,7 @@ Este sistema ofrece una visión consolidada de la evolución climática a median
   - Anomalías mensuales de **precipitación**  
   - Anomalías mensuales de **temperatura media, máxima y mínima**  
 
-Este sistema brinda información de alta calidad para el seguimiento y anticipación de fenómenos climáticos de escala estacional, apoyando la gestión de riesgos y la generación de escenarios de impacto sectorial.  
+Este sistema brinda información de alta calidad para el seguimiento y anticipación de fenómenos climáticos de escala estacional.  
 
 ---
 
@@ -67,8 +67,8 @@ Este sistema brinda información de alta calidad para el seguimiento y anticipac
 
 El propósito de **Modelos-WRF** es centralizar los **scripts, configuraciones y resultados** derivados de estas simulaciones regionales, contribuyendo al desarrollo de servicios climáticos en el Perú.  
 
-La combinación de estas tres fuentes globales (GEFS, CFSv2, ECMWF-S6) permite:  
+La combinación de estas tres fuentes globales (GEFS, CFSv2, ECMWF-S5) permite:  
 
 - Mejorar la representación espacial del clima en zonas de topografía compleja.  
-- Generar pronósticos subestacionales y estacionales ajustados a la realidad local.  
+- Generar predicciones subestacionales y estacionales ajustados a la realidad local.  
 - Brindar productos operativos para apoyar la planificación y la toma de decisiones estratégicas.  

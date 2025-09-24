@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Pronósticos Mensuales C3S - SMN-SENAMHI</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
+        select { font-size: 16px; padding: 6px; margin: 10px; }
+        .images { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 20px; }
+        .img-container { text-align: center; width: 30%; }
+        .img-container img { width: 100%; border: 1px solid #ccc; box-shadow: 2px 2px 6px rgba(0,0,0,0.1); }
+        .img-container p { font-size: 14px; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h2>Pronóstico Mensual C3S por Dirección Zonal - 2025</h2>
+    <p>Selecciona una Dirección Zonal y luego un mes para visualizar las anomalías:</p>
+
+    <label for="dzSelect">Dirección Zonal:</label>
+    <select id="dzSelect">
+        <option value="">-- Elegir DZ --</option>
+        <option value="01">DZ PIURA</option>
+        <option value="02">DZ LAMBAYEQUE</option>
+        <option value="03">DZ CAJAMARCA</option>
+        <option value="04">DZ LIMA</option>
+        <option value="05">DZ ICA</option>
+        <option value="06">DZ AREQUIPA</option>
+        <option value="07">DZ TACNA</option>
+        <option value="08">DZ LORETO</option>
+        <option value="09">DZ SAN MARTÍN</option>
+        <option value="10">DZ HUÁNUCO</option>
+        <option value="11">DZ JUNÍN</option>
+        <option value="12">DZ CUSCO</option>
+        <option value="13">DZ PUNO</option>
+    </select>
+
+    <label for="monthSelect">Mes:</label>
+    <select id="monthSelect" disabled>
+        <option value="">-- Elegir mes --</option>
+        <option value="202506">Junio 2025</option>
+        <option value="202507">Julio 2025</option>
+        <option value="202508">Agosto 2025</option>
+        <option value="202509">Setiembre 2025</option>
+        <option value="202510">Octubre 2025</option>
+    </select>
+
+    <div class="images" id="imageContainer"></div>
+
+    <script>
+        const imageContainer = document.getElementById("imageContainer");
+        const dzSelect = document.getElementById("dzSelect");
+        const monthSelect = document.getElementById("monthSelect");
+        const baseUrl = "https://smn-senamhi.github.io/C3Smensual/data/graphics/DZ/";
+
+        const dzList = {
+            "01": "PIURA", "02": "LAMBAYEQUE", "03": "CAJAMARCA", "04": "LIMA",
+            "05": "ICA", "06": "AREQUIPA", "07": "TACNA", "08": "LORETO",
+            "09": "SAN MARTÍN", "10": "HUÁNUCO", "11": "JUNÍN", "12": "CUSCO", "13": "PUNO"
+        };
+
+        const variables = [
+            { code: "anomPrec", label: "Precipitación" },
+            { code: "anomTempMin", label: "Temp. Mínima" },
+            { code: "anomTempMax", label: "Temp. Máxima" }
+        ];
+
+        dzSelect.addEventListener("change", function () {
+            imageContainer.innerHTML = "";
+            monthSelect.value = "";
+            monthSelect.disabled = !this.value;
+        });
+
+        monthSelect.addEventListener("change", function () {
+            const dzCode = dzSelect.value;
+            const dzName = dzList[dzCode];
+            const month = this.value;
+            imageContainer.innerHTML = "";
+
+            if (!dzCode || !month) return;
+
+            variables.forEach(v => {
+                const filename = `pre_ecmwf_${month}_${v.code}_per_${dzCode}.png`;
+                const fullPath = baseUrl + filename;
+
+                const div = document.createElement("div");
+                div.className = "img-container";
+
+                const img = document.createElement("img");
+                img.src = fullPath;
+                img.alt = `${v.label} - ${dzName}`;
+
+                const caption = document.createElement("p");
+                caption.textContent = `${v.label} - DZ ${dzName}`;
+
+                div.appendChild(img);
+                div.appendChild(caption);
+                imageContainer.appendChild(div);
+            });
+        });
+    </script>
+</body>
+</html>

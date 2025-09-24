@@ -285,8 +285,8 @@ function calcMaxIndex() {
     return;
   }
   const imgWidth = items[0].clientWidth + 20; // ancho + gap
-  const visibleWidth = galeria.parentElement.clientWidth - 120; // padding 60px izq+der
-  const visibleCount = Math.floor(visibleWidth / imgWidth);
+  const visibleWidth = galeria.parentElement.clientWidth;
+  const visibleCount = Math.floor(visibleWidth / imgWidth) + 1; // margen extra
   maxIndex = Math.max(0, items.length - visibleCount);
 }
 

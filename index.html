@@ -50,7 +50,7 @@
     .gallery {
       display: flex;
       gap: 20px;
-      transition: transform 0.8s ease; /* más lento y suave */
+      transition: transform 0.8s ease;
     }
     .gallery img {
       height: 420px;
@@ -77,10 +77,10 @@
       height: 45px;
       line-height: 45px;
       text-align: center;
-      transition: background 0.3s;
+      transition: background 0.3s, opacity 0.3s;
       z-index: 10;
     }
-    .arrow:hover {
+    .arrow:hover:not(.disabled) {
       background: #4f7f9f;
     }
     .arrow.left {
@@ -88,6 +88,10 @@
     }
     .arrow.right {
       right: 10px;
+    }
+    .arrow.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
     }
 
     footer {
@@ -164,9 +168,9 @@
 
 <div class="gallery-wrapper">
   <div class="gallery-container">
-    <button class="arrow left" onclick="moveGallery(-1)">&#10094;</button>
+    <button id="arrowLeft" class="arrow left" onclick="moveGallery(-1)">&#10094;</button>
     <div class="gallery" id="galeria"></div>
-    <button class="arrow right" onclick="moveGallery(1)">&#10095;</button>
+    <button id="arrowRight" class="arrow right" onclick="moveGallery(1)">&#10095;</button>
   </div>
 </div>
 
@@ -272,24 +276,44 @@ function cargarGaleria() {
 
   galleryIndex = 0;
   updateGalleryPosition();
+  updateArrows();
 }
 
 function moveGallery(direction) {
   const galeria = document.getElementById("galeria");
   const items = galeria.querySelectorAll("img").length;
 
-  // mover solo 1 imagen por clic
   galleryIndex += direction;
   if (galleryIndex < 0) galleryIndex = 0;
   if (galleryIndex > items - 1) galleryIndex = items - 1;
 
   updateGalleryPosition();
+  updateArrows();
 }
 
 function updateGalleryPosition() {
   const galeria = document.getElementById("galeria");
-  const offset = galleryIndex * -540; // ancho imagen + gap
+  const offset = galleryIndex * -540;
   galeria.style.transform = `translateX(${offset}px)`;
+}
+
+function updateArrows() {
+  const galeria = document.getElementById("galeria");
+  const items = galeria.querySelectorAll("img").length;
+  const leftArrow = document.getElementById("arrowLeft");
+  const rightArrow = document.getElementById("arrowRight");
+
+  if (galleryIndex <= 0) {
+    leftArrow.classList.add("disabled");
+  } else {
+    leftArrow.classList.remove("disabled");
+  }
+
+  if (galleryIndex >= items - 1) {
+    rightArrow.classList.add("disabled");
+  } else {
+    rightArrow.classList.remove("disabled");
+  }
 }
 
 // Modal funciones

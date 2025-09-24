@@ -24,7 +24,7 @@
     }
 
     header {
-      background: rgba(123,170,201,0.9); /* color con transparencia */
+      background: rgba(123,170,201,0.9);
       color: #fff;
       text-align: center;
       padding: 20px;
@@ -269,7 +269,6 @@ const archivos = { "GEFS": gefsFiles, "CFSv2": cfsv2Files, "ECMWF": ecmwfFiles }
 
 let galleryIndex = 0;
 let imgWidth = 0;
-let visibleCount = 1;
 
 function cargarGaleria() {
   const modelo = document.getElementById("modelo").value;
@@ -301,10 +300,7 @@ function calcSizes() {
   const galeria = document.getElementById("galeria");
   const items = galeria.querySelectorAll("img");
   if (items.length === 0) return;
-
   imgWidth = items[0].clientWidth + 20; // ancho + gap
-  const visibleWidth = galeria.parentElement.clientWidth;
-  visibleCount = Math.floor(visibleWidth / imgWidth);
 }
 
 function moveGallery(direction) {
@@ -314,17 +310,17 @@ function moveGallery(direction) {
 
   galleryIndex += direction;
   if (galleryIndex < 0) galleryIndex = 0;
-  if (galleryIndex > items.length - visibleCount) {
-    galleryIndex = items.length - visibleCount;
+  if (galleryIndex > items.length - 1) {
+    galleryIndex = items.length - 1;
   }
 
   const offset = galleryIndex * -imgWidth;
   galeria.style.transform = `translateX(${offset}px)`;
 
-  updateArrows(items.length, visibleCount);
+  updateArrows(items.length);
 }
 
-function updateArrows(total, visible) {
+function updateArrows(total) {
   const leftArrow = document.getElementById("arrowLeft");
   const rightArrow = document.getElementById("arrowRight");
 
@@ -334,7 +330,7 @@ function updateArrows(total, visible) {
     leftArrow.classList.remove("disabled");
   }
 
-  if (galleryIndex >= total - visible) {
+  if (galleryIndex >= total - 1) {
     rightArrow.classList.add("disabled");
   } else {
     rightArrow.classList.remove("disabled");

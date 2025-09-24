@@ -19,7 +19,7 @@
       background: url('https://raw.githubusercontent.com/SMN-SENAMHI/Materiales/main/GLOBO.png') 
                   no-repeat center center fixed;
       background-size: cover;
-      opacity: 0.25; /* 👈 ajusta la intensidad */
+      opacity: 0.25;
       z-index: -1;
     }
 
@@ -67,7 +67,7 @@
     .gallery {
       display: flex;
       gap: 20px;
-      transition: transform 0.8s ease;
+      transition: transform 0.4s ease; /* más rápida */
     }
     .gallery img {
       height: 420px;
@@ -300,7 +300,7 @@ function calcSizes() {
   const galeria = document.getElementById("galeria");
   const items = galeria.querySelectorAll("img");
   if (items.length === 0) return;
-  imgWidth = items[0].clientWidth + 20; // ancho + gap
+  imgWidth = items[0].clientWidth + 20;
 }
 
 function moveGallery(direction) {
@@ -308,7 +308,7 @@ function moveGallery(direction) {
   const items = galeria.querySelectorAll("img");
   if (items.length === 0) return;
 
-  galleryIndex += direction;
+  galleryIndex += direction * 2; // mover 2 imágenes por clic
   if (galleryIndex < 0) galleryIndex = 0;
   if (galleryIndex > items.length - 1) {
     galleryIndex = items.length - 1;

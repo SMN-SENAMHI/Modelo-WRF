@@ -31,25 +31,55 @@
       border: 1px solid #aaa;
       background: #f0f7fb;
     }
-    /* Galería en carrusel horizontal */
+
+    /* Contenedor del carrusel */
     .gallery-container {
-      overflow-x: auto;
-      white-space: nowrap;
-      padding: 20px;
+      position: relative;
+      padding: 20px 50px;
+      overflow: hidden;
       background: #f5f7fa;
     }
     .gallery {
-      display: inline-flex;
+      display: flex;
       gap: 20px;
-      justify-content: center;
+      transition: transform 0.4s ease-in-out;
     }
     .gallery img {
-      height: 400px; /* más grande */
+      height: 450px; /* más grandes */
       border-radius: 8px;
       border: 1px solid #ccc;
       box-shadow: 0 3px 6px rgba(0,0,0,0.15);
       background: #fff;
     }
+
+    /* Flechas */
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 40px;
+      font-weight: bold;
+      background: rgba(123, 170, 201, 0.8);
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      line-height: 50px;
+      text-align: center;
+      transition: background 0.3s;
+    }
+    .arrow:hover {
+      background: rgba(60, 120, 160, 0.9);
+    }
+    .arrow.left {
+      left: 10px;
+    }
+    .arrow.right {
+      right: 10px;
+    }
+
     footer {
       background: #7baac9;
       color: white;
@@ -90,7 +120,9 @@
 </div>
 
 <div class="gallery-container">
+  <button class="arrow left" onclick="moveGallery(-1)">&#10094;</button>
   <div class="gallery" id="galeria"></div>
+  <button class="arrow right" onclick="moveGallery(1)">&#10095;</button>
 </div>
 
 <footer>
@@ -103,8 +135,6 @@ const baseURL = "https://raw.githubusercontent.com/SMN-SENAMHI/Modelo-WRF/main/G
 // =========================
 // LISTAS DE ARCHIVOS
 // =========================
-
-// 🔹 1. WRF-GEFS (subestacional: 4 semanas, ejemplo)
 const gefsFiles = [
   "gefs_20250901_wk1_anomPrec.png",
   "gefs_20250901_wk1_anomTempMax.png",
@@ -120,7 +150,6 @@ const gefsFiles = [
   "gefs_20250901_wk4_anomTempMin.png"
 ];
 
-// 🔹 2. WRF-CFSv2 (mensuales + trimestrales)
 const cfsv2Files = [
   "pre_smnwrf_202510_anomPrec_wrf.png",
   "pre_smnwrf_202510_anomTempMax_wrf.png",
@@ -142,7 +171,6 @@ const cfsv2Files = [
   "pre_smnwrf_202602_anomTempMin_wrf.png"
 ];
 
-// 🔹 3. WRF-ECMWF (mensuales + trimestrales, ejemplo)
 const ecmwfFiles = [
   "pre_ecmwf_202509_anomPrec_wrf.png",
   "pre_ecmwf_202509_anomTempMax_wrf.png",
@@ -170,9 +198,6 @@ const ecmwfFiles = [
   "pre_ecmwf_202603_anomTempMin_wrf.png"
 ];
 
-// =========================
-// DICCIONARIO DE MODELOS
-// =========================
 const archivos = {
   "GEFS": gefsFiles,
   "CFSv2": cfsv2Files,
@@ -191,10 +216,8 @@ function cargarGaleria() {
   galeria.innerHTML = "";
 
   archivos[modelo].forEach(file => {
-    // Filtrar por variable
     if (!file.includes(variable)) return;
 
-    // Filtrar mensual/trimestral
     if (modelo !== "GEFS") {
       if (periodo === "mensual" && file.includes("1112")) return;
       if (periodo === "trimestral" && !file.includes("1112")) return;
@@ -205,23 +228,43 @@ function cargarGaleria() {
     img.alt = file;
     galeria.appendChild(img);
   });
+
+  galleryIndex = 0;
+  updateGalleryPosition();
 }
 
 // =========================
-// MOSTRAR/OCULTAR FILTRO PERIODO
+// CARRUSEL CON FLECHAS
+// =========================
+let galleryIndex = 0;
+function moveGallery(direction) {
+  const galeria = document.getElementById("galeria");
+  const items = galeria.querySelectorAll("img").length;
+  const visible = Math.floor(window.innerWidth / 500); // cuántas entran
+  const maxIndex = Math.max(0, items - visible);
+
+  galleryIndex += direction;
+  if (galleryIndex < 0) galleryIndex = 0;
+  if (galleryIndex > maxIndex) galleryIndex = maxIndex;
+
+  updateGalleryPosition();
+}
+function updateGalleryPosition() {
+  const galeria = document.getElementById("galeria");
+  const offset = galleryIndex * -520; // espacio entre imágenes
+  galeria.style.transform = `translateX(${offset}px)`;
+}
+
+// =========================
+// EVENTOS
 // =========================
 document.getElementById("modelo").addEventListener("change", () => {
   const modelo = document.getElementById("modelo").value;
   const filtroPeriodo = document.getElementById("filtroPeriodoLabel");
 
-  if (modelo === "CFSv2" || modelo === "ECMWF") {
-    filtroPeriodo.style.display = "inline-block";
-  } else {
-    filtroPeriodo.style.display = "none";
-  }
+  filtroPeriodo.style.display = (modelo === "CFSv2" || modelo === "ECMWF") ? "inline-block" : "none";
   cargarGaleria();
 });
-
 document.getElementById("variable").addEventListener("change", cargarGaleria);
 document.getElementById("periodo").addEventListener("change", cargarGaleria);
 

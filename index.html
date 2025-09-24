@@ -32,7 +32,6 @@
       background: #f0f7fb;
     }
 
-    /* Tarjeta carrusel */
     .gallery-wrapper {
       display: flex;
       justify-content: center;
@@ -50,7 +49,7 @@
     .gallery {
       display: flex;
       gap: 20px;
-      transition: transform 0.8s ease; /* más lento y suave */
+      transition: transform 0.8s ease;
     }
     .gallery img {
       height: 420px;
@@ -61,7 +60,6 @@
       cursor: pointer;
     }
 
-    /* Flechas */
     .arrow {
       position: absolute;
       top: 50%;
@@ -102,7 +100,6 @@
       margin-top: 20px;
     }
 
-    /* Modal (imagen completa) */
     .modal {
       display: none;
       position: fixed;
@@ -174,7 +171,6 @@
   </div>
 </div>
 
-<!-- Modal para imagen completa -->
 <div id="imgModal" class="modal">
   <span class="close" onclick="closeModal()">&times;</span>
   <img id="modalImg" src="" alt="Imagen ampliada">
@@ -253,6 +249,7 @@ const ecmwfFiles = [
 const archivos = { "GEFS": gefsFiles, "CFSv2": cfsv2Files, "ECMWF": ecmwfFiles };
 
 let galleryIndex = 0;
+let maxIndex = 0;
 
 function cargarGaleria() {
   const modelo = document.getElementById("modelo").value;
@@ -275,31 +272,42 @@ function cargarGaleria() {
   });
 
   galleryIndex = 0;
+  calcMaxIndex();
   updateGalleryPosition();
   updateArrows();
 }
 
-function moveGallery(direction) {
+function calcMaxIndex() {
   const galeria = document.getElementById("galeria");
-  const items = galeria.querySelectorAll("img").length;
+  const items = galeria.querySelectorAll("img");
+  if (items.length === 0) {
+    maxIndex = 0;
+    return;
+  }
+  const imgWidth = items[0].clientWidth + 20; // ancho + gap
+  const visibleWidth = galeria.parentElement.clientWidth - 120; // padding 60px izq+der
+  const visibleCount = Math.floor(visibleWidth / imgWidth);
+  maxIndex = Math.max(0, items.length - visibleCount);
+}
 
+function moveGallery(direction) {
   galleryIndex += direction;
   if (galleryIndex < 0) galleryIndex = 0;
-  if (galleryIndex > items - 1) galleryIndex = items - 1;
-
+  if (galleryIndex > maxIndex) galleryIndex = maxIndex;
   updateGalleryPosition();
   updateArrows();
 }
 
 function updateGalleryPosition() {
   const galeria = document.getElementById("galeria");
-  const offset = galleryIndex * -540;
+  const items = galeria.querySelectorAll("img");
+  if (items.length === 0) return;
+  const imgWidth = items[0].clientWidth + 20;
+  const offset = galleryIndex * -imgWidth;
   galeria.style.transform = `translateX(${offset}px)`;
 }
 
 function updateArrows() {
-  const galeria = document.getElementById("galeria");
-  const items = galeria.querySelectorAll("img").length;
   const leftArrow = document.getElementById("arrowLeft");
   const rightArrow = document.getElementById("arrowRight");
 
@@ -309,14 +317,14 @@ function updateArrows() {
     leftArrow.classList.remove("disabled");
   }
 
-  if (galleryIndex >= items - 1) {
+  if (galleryIndex >= maxIndex) {
     rightArrow.classList.add("disabled");
   } else {
     rightArrow.classList.remove("disabled");
   }
 }
 
-// Modal funciones
+// Modal
 function openModal(src) {
   document.getElementById("modalImg").src = src;
   document.getElementById("imgModal").style.display = "flex";
@@ -325,6 +333,7 @@ function closeModal() {
   document.getElementById("imgModal").style.display = "none";
 }
 
+// Listeners
 document.getElementById("modelo").addEventListener("change", () => {
   const modelo = document.getElementById("modelo").value;
   const filtroPeriodo = document.getElementById("filtroPeriodoLabel");
@@ -333,6 +342,10 @@ document.getElementById("modelo").addEventListener("change", () => {
 });
 document.getElementById("variable").addEventListener("change", cargarGaleria);
 document.getElementById("periodo").addEventListener("change", cargarGaleria);
+window.addEventListener("resize", () => {
+  calcMaxIndex();
+  updateArrows();
+});
 
 cargarGaleria();
 </script>

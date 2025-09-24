@@ -34,10 +34,10 @@
 
     /* Contenedor del carrusel */
     .gallery-container {
-      position: relative;
-      padding: 20px 50px;
       overflow: hidden;
+      padding: 40px 0;
       background: #f5f7fa;
+      position: relative;
     }
     .gallery {
       display: flex;
@@ -45,16 +45,16 @@
       transition: transform 0.4s ease-in-out;
     }
     .gallery img {
-      height: 450px; /* más grandes */
+      height: 450px;
       border-radius: 8px;
       border: 1px solid #ccc;
       box-shadow: 0 3px 6px rgba(0,0,0,0.15);
       background: #fff;
     }
 
-    /* Flechas */
+    /* Flechas siempre visibles en pantalla */
     .arrow {
-      position: absolute;
+      position: fixed; /* <-- cambio clave */
       top: 50%;
       transform: translateY(-50%);
       font-size: 40px;
@@ -69,15 +69,16 @@
       line-height: 50px;
       text-align: center;
       transition: background 0.3s;
+      z-index: 1000; /* siempre encima */
     }
     .arrow:hover {
       background: rgba(60, 120, 160, 0.9);
     }
     .arrow.left {
-      left: 10px;
+      left: 20px;
     }
     .arrow.right {
-      right: 10px;
+      right: 20px;
     }
 
     footer {
@@ -120,10 +121,12 @@
 </div>
 
 <div class="gallery-container">
-  <button class="arrow left" onclick="moveGallery(-1)">&#10094;</button>
   <div class="gallery" id="galeria"></div>
-  <button class="arrow right" onclick="moveGallery(1)">&#10095;</button>
 </div>
+
+<!-- Flechas fuera del contenedor -->
+<button class="arrow left" onclick="moveGallery(-1)">&#10094;</button>
+<button class="arrow right" onclick="moveGallery(1)">&#10095;</button>
 
 <footer>
   <p>Elaboración: SENAMHI / DMA / SMN</p>
@@ -132,145 +135,10 @@
 <script>
 const baseURL = "https://raw.githubusercontent.com/SMN-SENAMHI/Modelo-WRF/main/Graphics/";
 
-// =========================
-// LISTAS DE ARCHIVOS
-// =========================
 const gefsFiles = [
   "gefs_20250901_wk1_anomPrec.png",
   "gefs_20250901_wk1_anomTempMax.png",
   "gefs_20250901_wk1_anomTempMin.png",
   "gefs_20250901_wk2_anomPrec.png",
   "gefs_20250901_wk2_anomTempMax.png",
-  "gefs_20250901_wk2_anomTempMin.png",
-  "gefs_20250901_wk3_anomPrec.png",
-  "gefs_20250901_wk3_anomTempMax.png",
-  "gefs_20250901_wk3_anomTempMin.png",
-  "gefs_20250901_wk4_anomPrec.png",
-  "gefs_20250901_wk4_anomTempMax.png",
-  "gefs_20250901_wk4_anomTempMin.png"
-];
-
-const cfsv2Files = [
-  "pre_smnwrf_202510_anomPrec_wrf.png",
-  "pre_smnwrf_202510_anomTempMax_wrf.png",
-  "pre_smnwrf_202510_anomTempMin_wrf.png",
-  "pre_smnwrf_2025101112_anomPrec_wrf.png",
-  "pre_smnwrf_2025101112_anomTempMax_wrf.png",
-  "pre_smnwrf_2025101112_anomTempMin_wrf.png",
-  "pre_smnwrf_202511_anomPrec_wrf.png",
-  "pre_smnwrf_202511_anomTempMax_wrf.png",
-  "pre_smnwrf_202511_anomTempMin_wrf.png",
-  "pre_smnwrf_202512_anomPrec_wrf.png",
-  "pre_smnwrf_202512_anomTempMax_wrf.png",
-  "pre_smnwrf_202512_anomTempMin_wrf.png",
-  "pre_smnwrf_202601_anomPrec_wrf.png",
-  "pre_smnwrf_202601_anomTempMax_wrf.png",
-  "pre_smnwrf_202601_anomTempMin_wrf.png",
-  "pre_smnwrf_202602_anomPrec_wrf.png",
-  "pre_smnwrf_202602_anomTempMax_wrf.png",
-  "pre_smnwrf_202602_anomTempMin_wrf.png"
-];
-
-const ecmwfFiles = [
-  "pre_ecmwf_202509_anomPrec_wrf.png",
-  "pre_ecmwf_202509_anomTempMax_wrf.png",
-  "pre_ecmwf_202509_anomTempMin_wrf.png",
-  "pre_ecmwf_202510_anomPrec_wrf.png",
-  "pre_ecmwf_202510_anomTempMax_wrf.png",
-  "pre_ecmwf_202510_anomTempMin_wrf.png",
-  "pre_ecmwf_2025101112_anomPrec_wrf.png",
-  "pre_ecmwf_2025101112_anomTempMax_wrf.png",
-  "pre_ecmwf_2025101112_anomTempMin_wrf.png",
-  "pre_ecmwf_202511_anomPrec_wrf.png",
-  "pre_ecmwf_202511_anomTempMax_wrf.png",
-  "pre_ecmwf_202511_anomTempMin_wrf.png",
-  "pre_ecmwf_202512_anomPrec_wrf.png",
-  "pre_ecmwf_202512_anomTempMax_wrf.png",
-  "pre_ecmwf_202512_anomTempMin_wrf.png",
-  "pre_ecmwf_202601_anomPrec_wrf.png",
-  "pre_ecmwf_202601_anomTempMax_wrf.png",
-  "pre_ecmwf_202601_anomTempMin_wrf.png",
-  "pre_ecmwf_202602_anomPrec_wrf.png",
-  "pre_ecmwf_202602_anomTempMax_wrf.png",
-  "pre_ecmwf_202602_anomTempMin_wrf.png",
-  "pre_ecmwf_202603_anomPrec_wrf.png",
-  "pre_ecmwf_202603_anomTempMax_wrf.png",
-  "pre_ecmwf_202603_anomTempMin_wrf.png"
-];
-
-const archivos = {
-  "GEFS": gefsFiles,
-  "CFSv2": cfsv2Files,
-  "ECMWF": ecmwfFiles
-};
-
-// =========================
-// FUNCIÓN CARGAR GALERÍA
-// =========================
-function cargarGaleria() {
-  const modelo = document.getElementById("modelo").value;
-  const variable = document.getElementById("variable").value;
-  const periodo = document.getElementById("periodo").value;
-  const galeria = document.getElementById("galeria");
-
-  galeria.innerHTML = "";
-
-  archivos[modelo].forEach(file => {
-    if (!file.includes(variable)) return;
-
-    if (modelo !== "GEFS") {
-      if (periodo === "mensual" && file.includes("1112")) return;
-      if (periodo === "trimestral" && !file.includes("1112")) return;
-    }
-
-    const img = document.createElement("img");
-    img.src = baseURL + file;
-    img.alt = file;
-    galeria.appendChild(img);
-  });
-
-  galleryIndex = 0;
-  updateGalleryPosition();
-}
-
-// =========================
-// CARRUSEL CON FLECHAS
-// =========================
-let galleryIndex = 0;
-function moveGallery(direction) {
-  const galeria = document.getElementById("galeria");
-  const items = galeria.querySelectorAll("img").length;
-  const visible = Math.floor(window.innerWidth / 500); // cuántas entran
-  const maxIndex = Math.max(0, items - visible);
-
-  galleryIndex += direction;
-  if (galleryIndex < 0) galleryIndex = 0;
-  if (galleryIndex > maxIndex) galleryIndex = maxIndex;
-
-  updateGalleryPosition();
-}
-function updateGalleryPosition() {
-  const galeria = document.getElementById("galeria");
-  const offset = galleryIndex * -520; // espacio entre imágenes
-  galeria.style.transform = `translateX(${offset}px)`;
-}
-
-// =========================
-// EVENTOS
-// =========================
-document.getElementById("modelo").addEventListener("change", () => {
-  const modelo = document.getElementById("modelo").value;
-  const filtroPeriodo = document.getElementById("filtroPeriodoLabel");
-
-  filtroPeriodo.style.display = (modelo === "CFSv2" || modelo === "ECMWF") ? "inline-block" : "none";
-  cargarGaleria();
-});
-document.getElementById("variable").addEventListener("change", cargarGaleria);
-document.getElementById("periodo").addEventListener("change", cargarGaleria);
-
-// Inicial
-cargarGaleria();
-</script>
-
-</body>
-</html>
+  "gefs

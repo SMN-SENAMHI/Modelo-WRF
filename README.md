@@ -34,7 +34,7 @@ Este sistema permite disponer de información actualizada cada semana para la to
   - Resolución espacial: **16 km**  
   - Cobertura: **Perú**  
   - Frecuencia: **mensual**  
-  - Horizonte: **6 meses**  
+  - Horizonte: **5 meses**  
 
 - **Productos generados**:  
   - Anomalías mensuales de **precipitación**  

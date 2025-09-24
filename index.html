@@ -7,7 +7,7 @@
     body {
       font-family: Arial, sans-serif;
       margin: 0;
-      background: #f9fbfd;
+      background: #f0f4f8;
       color: #333;
     }
     header {
@@ -32,12 +32,20 @@
       background: #f0f7fb;
     }
 
-    /* Contenedor carrusel */
+    /* Contenedor del carrusel */
+    .gallery-wrapper {
+      display: flex;
+      justify-content: center;
+      margin: 30px;
+    }
     .gallery-container {
-      overflow: hidden;
-      padding: 40px 0;
-      background: #f5f7fa;
       position: relative;
+      overflow: hidden;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      padding: 30px 60px; /* espacio para flechas */
+      max-width: 90%;
     }
     .gallery {
       display: flex;
@@ -45,7 +53,7 @@
       transition: transform 0.4s ease-in-out;
     }
     .gallery img {
-      height: 450px;
+      height: 420px;
       border-radius: 8px;
       border: 1px solid #ccc;
       box-shadow: 0 3px 6px rgba(0,0,0,0.15);
@@ -54,31 +62,31 @@
 
     /* Flechas */
     .arrow {
-      position: fixed;
+      position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 40px;
+      font-size: 32px;
       font-weight: bold;
-      background: rgba(123, 170, 201, 0.8);
+      background: #7baac9;
       color: white;
       border: none;
       cursor: pointer;
       border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      line-height: 50px;
+      width: 45px;
+      height: 45px;
+      line-height: 45px;
       text-align: center;
       transition: background 0.3s;
-      z-index: 1000;
+      z-index: 10;
     }
     .arrow:hover {
-      background: rgba(60, 120, 160, 0.9);
+      background: #4f7f9f;
     }
     .arrow.left {
-      left: 20px;
+      left: 10px;
     }
     .arrow.right {
-      right: 20px;
+      right: 10px;
     }
 
     footer {
@@ -120,13 +128,13 @@
   </label>
 </div>
 
-<div class="gallery-container">
-  <div class="gallery" id="galeria"></div>
+<div class="gallery-wrapper">
+  <div class="gallery-container">
+    <button class="arrow left" onclick="moveGallery(-1)">&#10094;</button>
+    <div class="gallery" id="galeria"></div>
+    <button class="arrow right" onclick="moveGallery(1)">&#10095;</button>
+  </div>
 </div>
-
-<!-- Flechas fijas -->
-<button class="arrow left" onclick="moveGallery(-1)">&#10094;</button>
-<button class="arrow right" onclick="moveGallery(1)">&#10095;</button>
 
 <footer>
   <p>Elaboración: SENAMHI / DMA / SMN</p>
@@ -135,9 +143,6 @@
 <script>
 const baseURL = "https://raw.githubusercontent.com/SMN-SENAMHI/Modelo-WRF/main/Graphics/";
 
-// =========================
-// LISTAS DE ARCHIVOS
-// =========================
 const gefsFiles = [
   "gefs_20250901_wk1_anomPrec.png",
   "gefs_20250901_wk1_anomTempMax.png",
@@ -201,11 +206,7 @@ const ecmwfFiles = [
   "pre_ecmwf_202603_anomTempMin_wrf.png"
 ];
 
-const archivos = {
-  "GEFS": gefsFiles,
-  "CFSv2": cfsv2Files,
-  "ECMWF": ecmwfFiles
-};
+const archivos = { "GEFS": gefsFiles, "CFSv2": cfsv2Files, "ECMWF": ecmwfFiles };
 
 let galleryIndex = 0;
 
@@ -216,32 +217,17 @@ function cargarGaleria() {
   const galeria = document.getElementById("galeria");
 
   galeria.innerHTML = "";
-
   let files = archivos[modelo];
-
-  // Si no hay coincidencias, mostramos todo por defecto
-  let found = false;
-
   files.forEach(file => {
     if (!file.includes(variable)) return;
     if (modelo !== "GEFS") {
       if (periodo === "mensual" && file.includes("1112")) return;
       if (periodo === "trimestral" && !file.includes("1112")) return;
     }
-    found = true;
     const img = document.createElement("img");
     img.src = baseURL + file;
     galeria.appendChild(img);
   });
-
-  if (!found) {
-    // Mostrar todo para no dejar vacío
-    files.forEach(file => {
-      const img = document.createElement("img");
-      img.src = baseURL + file;
-      galeria.appendChild(img);
-    });
-  }
 
   galleryIndex = 0;
   updateGalleryPosition();
@@ -278,3 +264,5 @@ cargarGaleria();
 
 </body>
 </html>
+
+ 

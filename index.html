@@ -143,16 +143,16 @@
 <body>
 
 <header>
-  <h1>📊 Dashboard Modelos-WRF</h1>
+  <h1> Dashboard Modelos-WRF</h1>
   <p>Visualización dinámica de predicciones S2S</p>
 </header>
 
 <div class="controls">
   <label>Modelo:
     <select id="modelo">
-      <option value="GEFS">WRF-GEFS (Subestacional)</option>
-      <option value="CFSv2">WRF-CFSv2 (Mensual/Trimestral)</option>
-      <option value="ECMWF">WRF-ECMWF (Mensual/Trimestral)</option>
+      <option value="GEFS">WRF-GEFS (Subestacional #1)</option>
+      <option value="CFSv2">WRF-CFSv2 (Mensual/Trimestral #32)</option>
+      <option value="ECMWF">WRF-ECMWF (Mensual/Trimestral #1)</option>
     </select>
   </label>
   <label>Variable:
@@ -321,7 +321,7 @@ function moveGallery(direction) {
   const items = galeria.querySelectorAll("img");
   if (items.length === 0) return;
 
-  galleryIndex += direction * 3;
+  galleryIndex += direction * 4;
   if (galleryIndex < 0) galleryIndex = 0;
   if (galleryIndex > items.length - 1) {
     galleryIndex = items.length - 1;

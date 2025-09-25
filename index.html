@@ -11,7 +11,6 @@
       position: relative;
     }
 
-    /* Fondo con la imagen del globo */
     body::before {
       content: "";
       position: fixed;
@@ -67,7 +66,7 @@
     .gallery {
       display: flex;
       gap: 20px;
-      transition: transform 0.4s ease; /* velocidad rápida */
+      transition: transform 0.4s ease;
     }
     .gallery img {
       height: 420px;
@@ -96,19 +95,10 @@
       transition: background 0.3s, opacity 0.3s;
       z-index: 10;
     }
-    .arrow:hover:not(.disabled) {
-      background: #4f7f9f;
-    }
-    .arrow.left {
-      left: 10px;
-    }
-    .arrow.right {
-      right: 10px;
-    }
-    .arrow.disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
+    .arrow:hover:not(.disabled) { background: #4f7f9f; }
+    .arrow.left { left: 10px; }
+    .arrow.right { right: 10px; }
+    .arrow.disabled { opacity: 0.4; cursor: not-allowed; }
 
     footer {
       background: rgba(123,170,201,0.9);
@@ -147,9 +137,7 @@
       color: white;
       cursor: pointer;
     }
-    .close:hover {
-      color: #ddd;
-    }
+    .close:hover { color: #ddd; }
   </style>
 </head>
 <body>
@@ -203,70 +191,90 @@
 const baseURL = "https://raw.githubusercontent.com/SMN-SENAMHI/Modelo-WRF/main/Graphics/";
 
 // ======================
-// Archivos ejemplo
+// GEFS (Subestacional, Semanas)
 // ======================
-const gefsFiles = [
-  "gefs_20250901_wk1_anomPrec.png",
-  "gefs_20250901_wk1_anomTempMax.png",
-  "gefs_20250901_wk1_anomTempMin.png",
-  "gefs_20250901_wk2_anomPrec.png",
-  "gefs_20250901_wk2_anomTempMax.png",
-  "gefs_20250901_wk2_anomTempMin.png",
-  "gefs_20250901_wk3_anomPrec.png",
-  "gefs_20250901_wk3_anomTempMax.png",
-  "gefs_20250901_wk3_anomTempMin.png",
-  "gefs_20250901_wk4_anomPrec.png",
-  "gefs_20250901_wk4_anomTempMax.png",
-  "gefs_20250901_wk4_anomTempMin.png"
-];
+const gefsFiles = {
+  "Prec": [
+    "anomalia_PP_semanales1.png",
+    "anomalia_PP_semanales2.png",
+    "anomalia_PP_semanales3.png",
+    "anomalia_PP_semanales4.png"
+  ],
+  "TempMax": [
+    "anomalia_tmax_semanales1.png",
+    "anomalia_tmax_semanales2.png",
+    "anomalia_tmax_semanales3.png",
+    "anomalia_tmax_semanales4.png"
+  ],
+  "TempMin": [
+    "anomalia_tmin_semanales1.png",
+    "anomalia_tmin_semanales2.png",
+    "anomalia_tmin_semanales3.png",
+    "anomalia_tmin_semanales4.png"
+  ]
+};
 
-const cfsv2Files = [
-  "pre_smnwrf_202510_anomPrec_wrf.png",
-  "pre_smnwrf_202510_anomTempMax_wrf.png",
-  "pre_smnwrf_202510_anomTempMin_wrf.png",
-  "pre_smnwrf_2025101112_anomPrec_wrf.png",
-  "pre_smnwrf_2025101112_anomTempMax_wrf.png",
-  "pre_smnwrf_2025101112_anomTempMin_wrf.png",
-  "pre_smnwrf_202511_anomPrec_wrf.png",
-  "pre_smnwrf_202511_anomTempMax_wrf.png",
-  "pre_smnwrf_202511_anomTempMin_wrf.png",
-  "pre_smnwrf_202512_anomPrec_wrf.png",
-  "pre_smnwrf_202512_anomTempMax_wrf.png",
-  "pre_smnwrf_202512_anomTempMin_wrf.png",
-  "pre_smnwrf_202601_anomPrec_wrf.png",
-  "pre_smnwrf_202601_anomTempMax_wrf.png",
-  "pre_smnwrf_202601_anomTempMin_wrf.png",
-  "pre_smnwrf_202602_anomPrec_wrf.png",
-  "pre_smnwrf_202602_anomTempMax_wrf.png",
-  "pre_smnwrf_202602_anomTempMin_wrf.png"
-];
+// ======================
+// CFSv2 organizado
+// ======================
+const cfsv2Files = {
+  "mensual": [
+    "pre_smnwrf_202510_anomPrec_wrf.png",
+    "pre_smnwrf_202510_anomTempMax_wrf.png",
+    "pre_smnwrf_202510_anomTempMin_wrf.png",
+    "pre_smnwrf_202511_anomPrec_wrf.png",
+    "pre_smnwrf_202511_anomTempMax_wrf.png",
+    "pre_smnwrf_202511_anomTempMin_wrf.png",
+    "pre_smnwrf_202512_anomPrec_wrf.png",
+    "pre_smnwrf_202512_anomTempMax_wrf.png",
+    "pre_smnwrf_202512_anomTempMin_wrf.png",
+    "pre_smnwrf_202601_anomPrec_wrf.png",
+    "pre_smnwrf_202601_anomTempMax_wrf.png",
+    "pre_smnwrf_202601_anomTempMin_wrf.png",
+    "pre_smnwrf_202602_anomPrec_wrf.png",
+    "pre_smnwrf_202602_anomTempMax_wrf.png",
+    "pre_smnwrf_202602_anomTempMin_wrf.png"
+  ],
+  "trimestral": [
+    "pre_smnwrf_2025101112_anomPrec_wrf.png",
+    "pre_smnwrf_2025101112_anomTempMax_wrf.png",
+    "pre_smnwrf_2025101112_anomTempMin_wrf.png"
+  ]
+};
 
-const ecmwfFiles = [
-  "pre_ecmwf_202509_anomPrec_wrf.png",
-  "pre_ecmwf_202509_anomTempMax_wrf.png",
-  "pre_ecmwf_202509_anomTempMin_wrf.png",
-  "pre_ecmwf_202510_anomPrec_wrf.png",
-  "pre_ecmwf_202510_anomTempMax_wrf.png",
-  "pre_ecmwf_202510_anomTempMin_wrf.png",
-  "pre_ecmwf_2025101112_anomPrec_wrf.png",
-  "pre_ecmwf_2025101112_anomTempMax_wrf.png",
-  "pre_ecmwf_2025101112_anomTempMin_wrf.png",
-  "pre_ecmwf_202511_anomPrec_wrf.png",
-  "pre_ecmwf_202511_anomTempMax_wrf.png",
-  "pre_ecmwf_202511_anomTempMin_wrf.png",
-  "pre_ecmwf_202512_anomPrec_wrf.png",
-  "pre_ecmwf_202512_anomTempMax_wrf.png",
-  "pre_ecmwf_202512_anomTempMin_wrf.png",
-  "pre_ecmwf_202601_anomPrec_wrf.png",
-  "pre_ecmwf_202601_anomTempMax_wrf.png",
-  "pre_ecmwf_202601_anomTempMin_wrf.png",
-  "pre_ecmwf_202602_anomPrec_wrf.png",
-  "pre_ecmwf_202602_anomTempMax_wrf.png",
-  "pre_ecmwf_202602_anomTempMin_wrf.png",
-  "pre_ecmwf_202603_anomPrec_wrf.png",
-  "pre_ecmwf_202603_anomTempMax_wrf.png",
-  "pre_ecmwf_202603_anomTempMin_wrf.png"
-];
+// ======================
+// ECMWF organizado
+// ======================
+const ecmwfFiles = {
+  "mensual": [
+    "pre_ecmwf_202509_anomPrec_wrf.png",
+    "pre_ecmwf_202509_anomTempMax_wrf.png",
+    "pre_ecmwf_202509_anomTempMin_wrf.png",
+    "pre_ecmwf_202510_anomPrec_wrf.png",
+    "pre_ecmwf_202510_anomTempMax_wrf.png",
+    "pre_ecmwf_202510_anomTempMin_wrf.png",
+    "pre_ecmwf_202511_anomPrec_wrf.png",
+    "pre_ecmwf_202511_anomTempMax_wrf.png",
+    "pre_ecmwf_202511_anomTempMin_wrf.png",
+    "pre_ecmwf_202512_anomPrec_wrf.png",
+    "pre_ecmwf_202512_anomTempMax_wrf.png",
+    "pre_ecmwf_202512_anomTempMin_wrf.png",
+    "pre_ecmwf_202601_anomPrec_wrf.png",
+    "pre_ecmwf_202601_anomTempMax_wrf.png",
+    "pre_ecmwf_202601_anomTempMin_wrf.png",
+    "pre_ecmwf_202602_anomPrec_wrf.png",
+    "pre_ecmwf_202602_anomTempMax_wrf.png",
+    "pre_ecmwf_202602_anomTempMin_wrf.png",
+    "pre_ecmwf_202603_anomPrec_wrf.png",
+    "pre_ecmwf_202603_anomTempMax_wrf.png",
+    "pre_ecmwf_202603_anomTempMin_wrf.png"
+  ],
+  "trimestral": [
+    "pre_ecmwf_2025101112_anomPrec_wrf.png",
+    "pre_ecmwf_2025101112_anomTempMax_wrf.png",
+    "pre_ecmwf_2025101112_anomTempMin_wrf.png"
+  ]
+};
 
 const archivos = { "GEFS": gefsFiles, "CFSv2": cfsv2Files, "ECMWF": ecmwfFiles };
 
@@ -280,13 +288,16 @@ function cargarGaleria() {
   const galeria = document.getElementById("galeria");
 
   galeria.innerHTML = "";
-  let files = archivos[modelo];
+  let files = [];
+
+  if (modelo === "GEFS") {
+    files = archivos["GEFS"][variable];
+  } else {
+    files = archivos[modelo][periodo];
+    files = files.filter(f => f.includes(variable));
+  }
+
   files.forEach(file => {
-    if (!file.includes(variable)) return;
-    if (modelo !== "GEFS") {
-      if (periodo === "mensual" && file.includes("1112")) return;
-      if (periodo === "trimestral" && !file.includes("1112")) return;
-    }
     const img = document.createElement("img");
     img.src = baseURL + file;
     img.onclick = () => openModal(baseURL + file);
@@ -310,7 +321,7 @@ function moveGallery(direction) {
   const items = galeria.querySelectorAll("img");
   if (items.length === 0) return;
 
-  galleryIndex += direction * 3; // 👈 mover 3 gráficos por clic
+  galleryIndex += direction * 3;
   if (galleryIndex < 0) galleryIndex = 0;
   if (galleryIndex > items.length - 1) {
     galleryIndex = items.length - 1;

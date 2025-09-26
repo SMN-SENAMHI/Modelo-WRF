@@ -321,21 +321,21 @@ function moveGallery(direction) {
   const items = galeria.querySelectorAll("img");
   if (items.length === 0) return;
 
-  galleryIndex += direction * 4;
+  const totalBlocks = Math.ceil(items.length / 4);
+
+  galleryIndex += direction;
   if (galleryIndex < 0) galleryIndex = 0;
-  if (galleryIndex > items.length - 1) {
-    galleryIndex = items.length - 1;
+  if (galleryIndex > totalBlocks - 1) {
+    galleryIndex = totalBlocks - 1;
   }
 
-  
-  const offset = Math.floor(galleryIndex / 4) * -(imgWidth * 4);
-
+  const offset = galleryIndex * -(imgWidth * 4);
   galeria.style.transform = `translateX(${offset}px)`;
 
-  updateArrows(items.length);
+  updateArrows(totalBlocks);
 }
 
-function updateArrows(total) {
+function updateArrows(totalBlocks) {
   const leftArrow = document.getElementById("arrowLeft");
   const rightArrow = document.getElementById("arrowRight");
 
@@ -345,7 +345,7 @@ function updateArrows(total) {
     leftArrow.classList.remove("disabled");
   }
 
-  if (galleryIndex >= total - 1) {
+  if (galleryIndex >= totalBlocks - 1) {
     rightArrow.classList.add("disabled");
   } else {
     rightArrow.classList.remove("disabled");

@@ -68,13 +68,22 @@
       gap: 20px;
       transition: transform 0.4s ease;
     }
-    .gallery img {
+    .gallery-item {
+      text-align: center;
+    }
+    .gallery-item img {
       height: 420px;
       border-radius: 8px;
       border: 1px solid #ccc;
       box-shadow: 0 3px 6px rgba(0,0,0,0.15);
       background: #fff;
       cursor: pointer;
+    }
+    .gallery-item p {
+      margin: 8px 0 0 0;
+      font-size: 13px;
+      color: #333;
+      word-break: break-word;
     }
 
     .arrow {
@@ -234,10 +243,19 @@ function cargarGaleria() {
   }
 
   files.forEach(file => {
+    const item = document.createElement("div");
+    item.className = "gallery-item";
+
     const img = document.createElement("img");
     img.src = baseURL + file;
     img.onclick = () => openModal(baseURL + file);
-    galeria.appendChild(img);
+
+    const caption = document.createElement("p");
+    caption.textContent = file;
+
+    item.appendChild(img);
+    item.appendChild(caption);
+    galeria.appendChild(item);
   });
 
   galleryIndex = 0;
@@ -247,17 +265,17 @@ function cargarGaleria() {
 
 function calcSizes() {
   const galeria = document.getElementById("galeria");
-  const items = galeria.querySelectorAll("img");
+  const items = galeria.querySelectorAll(".gallery-item");
   if (items.length === 0) return;
   imgWidth = items[0].clientWidth + 20;
 }
 
 function moveGallery(direction) {
   const galeria = document.getElementById("galeria");
-  const items = galeria.querySelectorAll("img");
+  const items = galeria.querySelectorAll(".gallery-item");
   if (items.length === 0) return;
 
-  galleryIndex += direction; // mover de a 1 imagen
+  galleryIndex += direction; // mover de a 1
   if (galleryIndex < 0) galleryIndex = 0;
   if (galleryIndex > items.length - 1) {
     galleryIndex = items.length - 1;

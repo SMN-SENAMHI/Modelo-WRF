@@ -56,7 +56,6 @@
     }
     .gallery-container {
       position: relative;
-      overflow: hidden;
       background: rgba(255,255,255,0.95);
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -65,8 +64,9 @@
     }
     .gallery {
       display: flex;
+      flex-wrap: wrap;   /* ✅ ahora se acomodan automáticamente */
       gap: 20px;
-      transition: transform 0.4s ease;
+      justify-content: center;
     }
     .gallery img {
       height: 420px;
@@ -76,29 +76,6 @@
       background: #fff;
       cursor: pointer;
     }
-
-    .arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 32px;
-      font-weight: bold;
-      background: #7baac9;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 50%;
-      width: 45px;
-      height: 45px;
-      line-height: 45px;
-      text-align: center;
-      transition: background 0.3s, opacity 0.3s;
-      z-index: 10;
-    }
-    .arrow:hover:not(.disabled) { background: #4f7f9f; }
-    .arrow.left { left: 10px; }
-    .arrow.right { right: 10px; }
-    .arrow.disabled { opacity: 0.4; cursor: not-allowed; }
 
     footer {
       background: rgba(123,170,201,0.9);
@@ -172,9 +149,7 @@
 
 <div class="gallery-wrapper">
   <div class="gallery-container">
-    <button id="arrowLeft" class="arrow left" onclick="moveGallery(-1)">&#10094;</button>
     <div class="gallery" id="galeria"></div>
-    <button id="arrowRight" class="arrow right" onclick="moveGallery(1)">&#10095;</button>
   </div>
 </div>
 
@@ -278,9 +253,6 @@ const ecmwfFiles = {
 
 const archivos = { "GEFS": gefsFiles, "CFSv2": cfsv2Files, "ECMWF": ecmwfFiles };
 
-let galleryIndex = 0;
-let imgWidth = 0;
-
 function cargarGaleria() {
   const modelo = document.getElementById("modelo").value;
   const variable = document.getElementById("variable").value;
@@ -303,51 +275,6 @@ function cargarGaleria() {
     img.onclick = () => openModal(baseURL + file);
     galeria.appendChild(img);
   });
-
-  galleryIndex = 0;
-  calcSizes();
-  moveGallery(0);
-}
-
-function calcSizes() {
-  const galeria = document.getElementById("galeria");
-  const items = galeria.querySelectorAll("img");
-  if (items.length === 0) return;
-  imgWidth = items[0].clientWidth + 20;
-}
-
-function moveGallery(direction) {
-  const galeria = document.getElementById("galeria");
-  const items = galeria.querySelectorAll("img");
-  if (items.length === 0) return;
-
-  galleryIndex += direction * 4;
-  if (galleryIndex < 0) galleryIndex = 0;
-  if (galleryIndex > items.length - 1) {
-    galleryIndex = items.length - 1;
-  }
-
-  const offset = galleryIndex * -imgWidth;
-  galeria.style.transform = `translateX(${offset}px)`;
-
-  updateArrows(items.length);
-}
-
-function updateArrows(total) {
-  const leftArrow = document.getElementById("arrowLeft");
-  const rightArrow = document.getElementById("arrowRight");
-
-  if (galleryIndex <= 0) {
-    leftArrow.classList.add("disabled");
-  } else {
-    leftArrow.classList.remove("disabled");
-  }
-
-  if (galleryIndex >= total - 1) {
-    rightArrow.classList.add("disabled");
-  } else {
-    rightArrow.classList.remove("disabled");
-  }
 }
 
 function openModal(src) {
@@ -366,10 +293,6 @@ document.getElementById("modelo").addEventListener("change", () => {
 });
 document.getElementById("variable").addEventListener("change", cargarGaleria);
 document.getElementById("periodo").addEventListener("change", cargarGaleria);
-window.addEventListener("resize", () => {
-  calcSizes();
-  moveGallery(0);
-});
 
 cargarGaleria();
 </script>

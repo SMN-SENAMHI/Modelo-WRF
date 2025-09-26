@@ -92,13 +92,12 @@
       height: 45px;
       line-height: 45px;
       text-align: center;
-      transition: background 0.3s, opacity 0.3s;
+      transition: background 0.3s;
       z-index: 10;
     }
-    .arrow:hover:not(.disabled) { background: #4f7f9f; }
+    .arrow:hover { background: #4f7f9f; }
     .arrow.left { left: 10px; }
     .arrow.right { right: 10px; }
-    .arrow.disabled { opacity: 0.4; cursor: not-allowed; }
 
     footer {
       background: rgba(123,170,201,0.9);
@@ -321,35 +320,14 @@ function moveGallery(direction) {
   const items = galeria.querySelectorAll("img");
   if (items.length === 0) return;
 
-  const totalBlocks = Math.ceil(items.length / 4);
-
-  galleryIndex += direction;
+  galleryIndex += direction * 4; // mover 4 en 4
   if (galleryIndex < 0) galleryIndex = 0;
-  if (galleryIndex > totalBlocks - 1) {
-    galleryIndex = totalBlocks - 1;
+  if (galleryIndex > items.length - 1) {
+    galleryIndex = items.length - 1;
   }
 
-  const offset = galleryIndex * -(imgWidth * 4);
+  const offset = Math.floor(galleryIndex / 4) * -(imgWidth * 4);
   galeria.style.transform = `translateX(${offset}px)`;
-
-  updateArrows(totalBlocks);
-}
-
-function updateArrows(totalBlocks) {
-  const leftArrow = document.getElementById("arrowLeft");
-  const rightArrow = document.getElementById("arrowRight");
-
-  if (galleryIndex <= 0) {
-    leftArrow.classList.add("disabled");
-  } else {
-    leftArrow.classList.remove("disabled");
-  }
-
-  if (galleryIndex >= totalBlocks - 1) {
-    rightArrow.classList.add("disabled");
-  } else {
-    rightArrow.classList.remove("disabled");
-  }
 }
 
 function openModal(src) {

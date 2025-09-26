@@ -327,7 +327,9 @@ function moveGallery(direction) {
     galleryIndex = items.length - 1;
   }
 
-  const offset = galleryIndex * -imgWidth;
+  
+  const offset = Math.floor(galleryIndex / 4) * -(imgWidth * 4);
+
   galeria.style.transform = `translateX(${offset}px)`;
 
   updateArrows(items.length);

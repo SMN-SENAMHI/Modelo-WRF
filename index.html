@@ -1,3 +1,4 @@
+el scrollo se tiene q mover mas a la izquierdas , de hasta 4 graficos: cambiar en :
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -68,22 +69,13 @@
       gap: 20px;
       transition: transform 0.4s ease;
     }
-    .gallery-item {
-      text-align: center;
-    }
-    .gallery-item img {
+    .gallery img {
       height: 420px;
       border-radius: 8px;
       border: 1px solid #ccc;
       box-shadow: 0 3px 6px rgba(0,0,0,0.15);
       background: #fff;
       cursor: pointer;
-    }
-    .gallery-item p {
-      margin: 8px 0 0 0;
-      font-size: 13px;
-      color: #333;
-      word-break: break-word;
     }
 
     .arrow {
@@ -101,12 +93,13 @@
       height: 45px;
       line-height: 45px;
       text-align: center;
-      transition: background 0.3s;
+      transition: background 0.3s, opacity 0.3s;
       z-index: 10;
     }
-    .arrow:hover { background: #4f7f9f; }
+    .arrow:hover:not(.disabled) { background: #4f7f9f; }
     .arrow.left { left: 10px; }
     .arrow.right { right: 10px; }
+    .arrow.disabled { opacity: 0.4; cursor: not-allowed; }
 
     footer {
       background: rgba(123,170,201,0.9);
@@ -198,27 +191,90 @@
 <script>
 const baseURL = "https://raw.githubusercontent.com/SMN-SENAMHI/Modelo-WRF/main/Graphics/";
 
+// ======================
+// GEFS (Subestacional, Semanas)
+// ======================
 const gefsFiles = {
-  "Prec": ["anomalia_PP_semanales1.png","anomalia_PP_semanales2.png","anomalia_PP_semanales3.png","anomalia_PP_semanales4.png"],
-  "TempMax": ["anomalia_tmax_semanales1.png","anomalia_tmax_semanales2.png","anomalia_tmax_semanales3.png","anomalia_tmax_semanales4.png"],
-  "TempMin": ["anomalia_tmin_semanales1.png","anomalia_tmin_semanales2.png","anomalia_tmin_semanales3.png","anomalia_tmin_semanales4.png"]
+  "Prec": [
+    "anomalia_PP_semanales1.png",
+    "anomalia_PP_semanales2.png",
+    "anomalia_PP_semanales3.png",
+    "anomalia_PP_semanales4.png"
+  ],
+  "TempMax": [
+    "anomalia_tmax_semanales1.png",
+    "anomalia_tmax_semanales2.png",
+    "anomalia_tmax_semanales3.png",
+    "anomalia_tmax_semanales4.png"
+  ],
+  "TempMin": [
+    "anomalia_tmin_semanales1.png",
+    "anomalia_tmin_semanales2.png",
+    "anomalia_tmin_semanales3.png",
+    "anomalia_tmin_semanales4.png"
+  ]
 };
 
+// ======================
+// CFSv2 organizado
+// ======================
 const cfsv2Files = {
   "mensual": [
-    "pre_smnwrf_202510_anomPrec_wrf.png","pre_smnwrf_202510_anomTempMax_wrf.png","pre_smnwrf_202510_anomTempMin_wrf.png",
-    "pre_smnwrf_202511_anomPrec_wrf.png","pre_smnwrf_202511_anomTempMax_wrf.png"
+    "pre_smnwrf_202510_anomPrec_wrf.png",
+    "pre_smnwrf_202510_anomTempMax_wrf.png",
+    "pre_smnwrf_202510_anomTempMin_wrf.png",
+    "pre_smnwrf_202511_anomPrec_wrf.png",
+    "pre_smnwrf_202511_anomTempMax_wrf.png",
+    "pre_smnwrf_202511_anomTempMin_wrf.png",
+    "pre_smnwrf_202512_anomPrec_wrf.png",
+    "pre_smnwrf_202512_anomTempMax_wrf.png",
+    "pre_smnwrf_202512_anomTempMin_wrf.png",
+    "pre_smnwrf_202601_anomPrec_wrf.png",
+    "pre_smnwrf_202601_anomTempMax_wrf.png",
+    "pre_smnwrf_202601_anomTempMin_wrf.png",
+    "pre_smnwrf_202602_anomPrec_wrf.png",
+    "pre_smnwrf_202602_anomTempMax_wrf.png",
+    "pre_smnwrf_202602_anomTempMin_wrf.png"
   ],
-  "trimestral": ["pre_smnwrf_2025101112_anomPrec_wrf.png","pre_smnwrf_2025101112_anomTempMax_wrf.png","pre_smnwrf_2025101112_anomTempMin_wrf.png"]
+  "trimestral": [
+    "pre_smnwrf_2025101112_anomPrec_wrf.png",
+    "pre_smnwrf_2025101112_anomTempMax_wrf.png",
+    "pre_smnwrf_2025101112_anomTempMin_wrf.png"
+  ]
 };
 
+// ======================
+// ECMWF organizado
+// ======================
 const ecmwfFiles = {
   "mensual": [
-    "pre_ecmwf_202509_anomPrec_wrf.png","pre_ecmwf_202509_anomTempMax_wrf.png","pre_ecmwf_202509_anomTempMin_wrf.png",
-    "pre_ecmwf_202510_anomPrec_wrf.png","pre_ecmwf_202510_anomTempMax_wrf.png","pre_ecmwf_202510_anomTempMin_wrf.png",
-    "pre_ecmwf_202511_anomPrec_wrf.png"
+    "pre_ecmwf_202509_anomPrec_wrf.png",
+    "pre_ecmwf_202509_anomTempMax_wrf.png",
+    "pre_ecmwf_202509_anomTempMin_wrf.png",
+    "pre_ecmwf_202510_anomPrec_wrf.png",
+    "pre_ecmwf_202510_anomTempMax_wrf.png",
+    "pre_ecmwf_202510_anomTempMin_wrf.png",
+    "pre_ecmwf_202511_anomPrec_wrf.png",
+    "pre_ecmwf_202511_anomTempMax_wrf.png",
+    "pre_ecmwf_202511_anomTempMin_wrf.png",
+    "pre_ecmwf_202512_anomPrec_wrf.png",
+    "pre_ecmwf_202512_anomTempMax_wrf.png",
+    "pre_ecmwf_202512_anomTempMin_wrf.png",
+    "pre_ecmwf_202601_anomPrec_wrf.png",
+    "pre_ecmwf_202601_anomTempMax_wrf.png",
+    "pre_ecmwf_202601_anomTempMin_wrf.png",
+    "pre_ecmwf_202602_anomPrec_wrf.png",
+    "pre_ecmwf_202602_anomTempMax_wrf.png",
+    "pre_ecmwf_202602_anomTempMin_wrf.png",
+    "pre_ecmwf_202603_anomPrec_wrf.png",
+    "pre_ecmwf_202603_anomTempMax_wrf.png",
+    "pre_ecmwf_202603_anomTempMin_wrf.png"
   ],
-  "trimestral": ["pre_ecmwf_2025101112_anomPrec_wrf.png","pre_ecmwf_2025101112_anomTempMax_wrf.png","pre_ecmwf_2025101112_anomTempMin_wrf.png"]
+  "trimestral": [
+    "pre_ecmwf_2025101112_anomPrec_wrf.png",
+    "pre_ecmwf_2025101112_anomTempMax_wrf.png",
+    "pre_ecmwf_2025101112_anomTempMin_wrf.png"
+  ]
 };
 
 const archivos = { "GEFS": gefsFiles, "CFSv2": cfsv2Files, "ECMWF": ecmwfFiles };
@@ -243,19 +299,10 @@ function cargarGaleria() {
   }
 
   files.forEach(file => {
-    const item = document.createElement("div");
-    item.className = "gallery-item";
-
     const img = document.createElement("img");
     img.src = baseURL + file;
     img.onclick = () => openModal(baseURL + file);
-
-    const caption = document.createElement("p");
-    caption.textContent = file;
-
-    item.appendChild(img);
-    item.appendChild(caption);
-    galeria.appendChild(item);
+    galeria.appendChild(img);
   });
 
   galleryIndex = 0;
@@ -265,17 +312,17 @@ function cargarGaleria() {
 
 function calcSizes() {
   const galeria = document.getElementById("galeria");
-  const items = galeria.querySelectorAll(".gallery-item");
+  const items = galeria.querySelectorAll("img");
   if (items.length === 0) return;
   imgWidth = items[0].clientWidth + 20;
 }
 
 function moveGallery(direction) {
   const galeria = document.getElementById("galeria");
-  const items = galeria.querySelectorAll(".gallery-item");
+  const items = galeria.querySelectorAll("img");
   if (items.length === 0) return;
 
-  galleryIndex += direction; // mover de a 1
+  galleryIndex += direction * 4;
   if (galleryIndex < 0) galleryIndex = 0;
   if (galleryIndex > items.length - 1) {
     galleryIndex = items.length - 1;
@@ -283,6 +330,25 @@ function moveGallery(direction) {
 
   const offset = galleryIndex * -imgWidth;
   galeria.style.transform = `translateX(${offset}px)`;
+
+  updateArrows(items.length);
+}
+
+function updateArrows(total) {
+  const leftArrow = document.getElementById("arrowLeft");
+  const rightArrow = document.getElementById("arrowRight");
+
+  if (galleryIndex <= 0) {
+    leftArrow.classList.add("disabled");
+  } else {
+    leftArrow.classList.remove("disabled");
+  }
+
+  if (galleryIndex >= total - 1) {
+    rightArrow.classList.add("disabled");
+  } else {
+    rightArrow.classList.remove("disabled");
+  }
 }
 
 function openModal(src) {
@@ -311,7 +377,3 @@ cargarGaleria();
 
 </body>
 </html>
-
-     
-     
-   

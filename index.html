@@ -54,26 +54,20 @@
       justify-content: center;
       margin: 30px;
     }
-
     .gallery-container {
       position: relative;
       background: rgba(255,255,255,0.95);
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      padding: 30px 20px;
+      padding: 30px 60px;
       max-width: 90%;
-
-      /* ✅ Scroll horizontal */
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
     }
-
     .gallery {
       display: flex;
+      flex-wrap: wrap;   /* ✅ ahora se acomodan automáticamente */
       gap: 20px;
+      justify-content: center;
     }
-
     .gallery img {
       height: 420px;
       border-radius: 8px;
@@ -81,9 +75,6 @@
       box-shadow: 0 3px 6px rgba(0,0,0,0.15);
       background: #fff;
       cursor: pointer;
-
-      flex-shrink: 0;
-      scroll-snap-align: center; /* ✅ centrado */
     }
 
     footer {
@@ -103,18 +94,17 @@
       top: 0;
       width: 100%;
       height: 100%;
+      overflow: auto;
       background-color: rgba(0,0,0,0.8);
       justify-content: center;
       align-items: center;
     }
-
     .modal img {
       max-width: 90%;
       max-height: 90%;
       border-radius: 8px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.4);
     }
-
     .close {
       position: absolute;
       top: 20px;
@@ -212,7 +202,13 @@ const cfsv2Files = {
     "pre_smnwrf_202511_anomTempMin_wrf.png",
     "pre_smnwrf_202512_anomPrec_wrf.png",
     "pre_smnwrf_202512_anomTempMax_wrf.png",
-    "pre_smnwrf_202512_anomTempMin_wrf.png"
+    "pre_smnwrf_202512_anomTempMin_wrf.png",
+    "pre_smnwrf_202601_anomPrec_wrf.png",
+    "pre_smnwrf_202601_anomTempMax_wrf.png",
+    "pre_smnwrf_202601_anomTempMin_wrf.png",
+    "pre_smnwrf_202602_anomPrec_wrf.png",
+    "pre_smnwrf_202602_anomTempMax_wrf.png",
+    "pre_smnwrf_202602_anomTempMin_wrf.png"
   ],
   "trimestral": [
     "pre_smnwrf_2025101112_anomPrec_wrf.png",
@@ -231,7 +227,22 @@ const ecmwfFiles = {
     "pre_ecmwf_202509_anomTempMin_wrf.png",
     "pre_ecmwf_202510_anomPrec_wrf.png",
     "pre_ecmwf_202510_anomTempMax_wrf.png",
-    "pre_ecmwf_202510_anomTempMin_wrf.png"
+    "pre_ecmwf_202510_anomTempMin_wrf.png",
+    "pre_ecmwf_202511_anomPrec_wrf.png",
+    "pre_ecmwf_202511_anomTempMax_wrf.png",
+    "pre_ecmwf_202511_anomTempMin_wrf.png",
+    "pre_ecmwf_202512_anomPrec_wrf.png",
+    "pre_ecmwf_202512_anomTempMax_wrf.png",
+    "pre_ecmwf_202512_anomTempMin_wrf.png",
+    "pre_ecmwf_202601_anomPrec_wrf.png",
+    "pre_ecmwf_202601_anomTempMax_wrf.png",
+    "pre_ecmwf_202601_anomTempMin_wrf.png",
+    "pre_ecmwf_202602_anomPrec_wrf.png",
+    "pre_ecmwf_202602_anomTempMax_wrf.png",
+    "pre_ecmwf_202602_anomTempMin_wrf.png",
+    "pre_ecmwf_202603_anomPrec_wrf.png",
+    "pre_ecmwf_202603_anomTempMax_wrf.png",
+    "pre_ecmwf_202603_anomTempMin_wrf.png"
   ],
   "trimestral": [
     "pre_ecmwf_2025101112_anomPrec_wrf.png",
